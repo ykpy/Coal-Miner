@@ -22,12 +22,29 @@ public class StageManager : MonoBehaviour {
 	public GameObject unbreakableBlock;
 	public GameObject breakableBlock;
 
+	public GameObject wall;
+
+	readonly Vector3 defaultWallScale = new Vector3(1f, 0.01f, 1f);
+
 	public InputField stageName;
-	public Text stageSize;
+
+	public InputField stageXInput;
+	public InputField stageYInput;
+	public InputField stageZInput;
 
 	void Awake() {
 		InitializeStage(stageX, stageY, stageZ);
 		ShowStageSize();
+	}
+
+	void Start() {
+		InitializeWall();
+	}
+
+	void InitializeWall() {
+		wall.transform.localScale = defaultWallScale;
+		wall.transform.localScale = new Vector3(stageX, wall.transform.localScale.y, stageZ);
+		wall.transform.position = new Vector3(stageX - 1, wall.transform.position.y * 2, stageZ - 1) / 2;
 	}
 
 	bool InitializeStage(uint x, uint y, uint z) {
@@ -42,6 +59,10 @@ public class StageManager : MonoBehaviour {
 	}
 
 	bool InitializeStage(Stage stage) {
+		stageX = stage.X;
+		stageY = stage.Y;
+		stageZ = stage.Z;
+
 		DestroyAllBlocks();
 		this.stage = stage;
 		DoToStage((s, i, j, k) => {
@@ -54,6 +75,11 @@ public class StageManager : MonoBehaviour {
 		foreach (var block in GameObject.FindGameObjectsWithTag(Tags.BLOCK)) {
 			DestroyImmediate(block);
 		}
+	}
+
+	public void ResizeStage() {
+		InitializeStage(new Stage(uint.Parse(stageXInput.text), uint.Parse(stageYInput.text), uint.Parse(stageZInput.text), stage));
+		InitializeWall();
 	}
 
 	GameObject GetBlockObjectByBlockType(Block blockType) {
@@ -126,7 +152,9 @@ public class StageManager : MonoBehaviour {
 	}
 
 	void ShowStageSize() {
-		stageSize.text = MessageUtils.FormatXYZ(stageX, stageY, stageZ);
+		stageXInput.text = stageX.ToString();
+		stageYInput.text = stageY.ToString();
+		stageZInput.text = stageZ.ToString();
 	}
 
 	delegate void ActionStage(Stage stage, uint i, uint j, uint k);
