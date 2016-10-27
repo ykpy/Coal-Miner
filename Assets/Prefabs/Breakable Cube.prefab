@@ -25,7 +25,7 @@ GameObject:
   - 114: {fileID: 114000013438927446}
   - 54: {fileID: 54000010840256558}
   m_Layer: 0
-  m_Name: Unbreakable Cube
+  m_Name: Breakable Cube
   m_TagString: Block
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -57,7 +57,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: d7360af94adb226469b593cc5fc2069c, type: 2}
+  - {fileID: 2100000, guid: e1e946d1f9d027549b31d65dcad963cc, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_ProbeAnchor: {fileID: 0}

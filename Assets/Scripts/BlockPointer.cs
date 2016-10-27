@@ -13,10 +13,26 @@ public class BlockPointer : MonoBehaviour {
 
 	StageIndex pointerIndex;
 
+	Block blockType;
+
+	public void SetGroundBlock() {
+		this.blockType = Block.Ground;
+	}
+
+	public void SetBreakableBlock() {
+		this.blockType = Block.Breakable;
+	}
+
+	public void SetUnbreakableBlock() {
+		this.blockType = Block.Unbreakable;
+	}
+
 	// Use this for initialization
 	void Start () {
 		pointerIndex = ConvertPositionToIndex(transform.position);
 		pointerPositionText.text = pointerIndex.ToString();
+
+		SetGroundBlock();
 	}
 	
 	// Update is called once per frame
@@ -35,7 +51,7 @@ public class BlockPointer : MonoBehaviour {
 
 		if (Input.GetMouseButtonDown(0)) {
 			if (hit.collider != null) {
-				StageManager.Instance.AddBlock(ConvertPositionToIndex(hit.point), Block.Breakable);
+				StageManager.Instance.AddBlock(ConvertPositionToIndex(hit.point), blockType);
 			}
 		} else if (Input.GetMouseButtonDown(1)) {
 			if (hit.collider.tag == Tags.BLOCK) {

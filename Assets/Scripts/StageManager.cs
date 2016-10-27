@@ -18,7 +18,9 @@ public class StageManager : MonoBehaviour {
 
 	Stage stage;
 
-	public GameObject block;
+	public GameObject groundBlock;
+	public GameObject unbreakableBlock;
+	public GameObject breakableBlock;
 
 	public InputField stageName;
 	public Text stageSize;
@@ -54,12 +56,25 @@ public class StageManager : MonoBehaviour {
 		}
 	}
 
+	GameObject GetBlockObjectByBlockType(Block blockType) {
+		switch (blockType) {
+			case Block.Breakable:
+				return breakableBlock;
+			case Block.Ground:
+				return groundBlock;
+			case Block.Unbreakable:
+				return unbreakableBlock;
+			default:
+				return null;
+		}
+	}
+
 	public bool AddBlock(uint x, uint y, uint z, Block blockType) {
 		if (blockType == Block.Empty)
 			return false;
 
 		stage[x, y, z] = blockType;
-		Instantiate(block, new Vector3(x, y, z), Quaternion.identity);
+		Instantiate(GetBlockObjectByBlockType(blockType), new Vector3(x, y, z), Quaternion.identity);
 		return true;
 	}
 
