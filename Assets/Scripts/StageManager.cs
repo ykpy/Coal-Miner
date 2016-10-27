@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using System.IO;
 using System.Linq;
 
+
 public class StageManager : MonoBehaviour {
 
 	static StageManager _instance;
@@ -27,10 +28,13 @@ public class StageManager : MonoBehaviour {
 	readonly Vector3 defaultWallScale = new Vector3(1f, 0.01f, 1f);
 
 	public InputField stageName;
+	public InputField fileName;
 
 	public InputField stageXInput;
 	public InputField stageYInput;
 	public InputField stageZInput;
+
+	public FileExplorer explorer;
 
 	void Awake() {
 		InitializeStage(stageX, stageY, stageZ);
@@ -39,6 +43,10 @@ public class StageManager : MonoBehaviour {
 
 	void Start() {
 		InitializeWall();
+	}
+
+	void Update() {
+		fileName.text = fileName.text.AddFileExtension(".dat");
 	}
 
 	void InitializeWall() {
@@ -109,7 +117,18 @@ public class StageManager : MonoBehaviour {
 	}
 
 	public void SaveStage() {
+		if (string.IsNullOrEmpty(fileName.text))
+			return;
+
+		SaveStage(fileName.text);
+	}
+
+	public void SaveStage(string fileName) {
 		string buffer = "";
+
+		if (string.IsNullOrEmpty(stageName.text)) {
+			return;
+		}
 
 		buffer += stageName.text + "\n\n";
 
@@ -125,14 +144,22 @@ public class StageManager : MonoBehaviour {
 			buffer += "\n";
 		}
 
-		using (var writer = new StreamWriter(Application.dataPath + @"/../stage.dat")) {
+		using (var writer = new StreamWriter(Application.dataPath + @"/../StageData/" + fileName)) {
 			writer.Write(buffer);
 		}
 	}
 
 	public void LoadStage() {
-		stage = new Stage(LoadStageFile(Application.dataPath + @"/../stage.dat"));
+		if (!explorer)
+			explorer = FindObjectOfType<FileExplorer>();
+
+		explorer.OpenDirectory(Application.dataPath + @"/../StageData/");
+	}
+
+	public void LoadStage(string fileName) {
+		stage = new Stage(LoadStageFile(Application.dataPath + @"/../StageData/" + fileName));
 		stageName.text = stage.StageName;
+		this.fileName.text = fileName;
 
 		stageX = stage.X;
 		stageY = stage.Y;

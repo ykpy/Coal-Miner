@@ -17,4 +17,6 @@ public static class BlockUtils {
 	public static Material GetMaterial(this GameObject obj) {
 		return obj.GetComponent<Renderer>().sharedMaterial;
 	}
+
+
 }

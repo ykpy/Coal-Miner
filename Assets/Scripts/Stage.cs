@@ -1,6 +1,10 @@
 ﻿using System.Linq;
+using UnityEngine;
 
 public class Stage {
+
+	public static readonly string StageDataDirectoryPath = Application.dataPath + @"/../StageData/";
+
 
 	string stageName;
 	public string StageName {
