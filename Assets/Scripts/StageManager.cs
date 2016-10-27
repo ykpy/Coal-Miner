@@ -116,6 +116,11 @@ public class StageManager : MonoBehaviour {
 		return AddBlock(index.x, index.y, index.z, blockType);
 	}
 
+	public bool EraseBlock(StageIndex index) {
+		stage[index.x, index.y, index.z] = Block.Empty;
+		return true;
+	}
+
 	public void SaveStage() {
 		if (string.IsNullOrEmpty(fileName.text))
 			return;

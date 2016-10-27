@@ -62,6 +62,7 @@ public class BlockPointer : MonoBehaviour {
 			}
 		} else if (Input.GetMouseButtonDown(1)) {
 			if (hit.collider.tag == Tags.BLOCK) {
+				StageManager.Instance.EraseBlock(ConvertPositionToIndex(hit.collider.transform.position));
 				Destroy(hit.collider.gameObject);
 			}
 		}
