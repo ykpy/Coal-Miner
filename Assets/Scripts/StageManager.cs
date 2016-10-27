@@ -113,11 +113,11 @@ public class StageManager : MonoBehaviour {
 
 		buffer += stageName.text + "\n\n";
 
-		buffer += stageX + " " + stageY + " " + stageZ + "\n\n";
+		buffer += stage.X + " " + stage.Y + " " + stage.Z + "\n\n";
 
-		for (uint j = 0; j < stageY; j++) {
-			for (uint k = 0; k < stageZ; k++) {
-				for (uint i = 0; i < stageX; i++) {
+		for (uint j = 0; j < stage.Y; j++) {
+			for (uint k = 0; k < stage.Z; k++) {
+				for (uint i = 0; i < stage.X; i++) {
 					buffer += stage[i, j, k].ToInt() + " ";
 				}
 				buffer += "\n";
@@ -141,6 +141,7 @@ public class StageManager : MonoBehaviour {
 		ShowStageSize();
 
 		InitializeStage(stage);
+		InitializeWall();
 	}
 
 	string LoadStageFile(string filePath) {
@@ -167,6 +168,12 @@ public class StageManager : MonoBehaviour {
 				}
 			}
 		}
+	}
+
+	public GameObject FindBlockByPosition(Vector3 position) {
+		return GameObject.FindGameObjectsWithTag(Tags.BLOCK)
+			.Where(block => block.transform.position == BlockUtils.RoundPosition(position))
+			.First();
 	}
 }
 
