@@ -175,5 +175,18 @@ public class StageManager : MonoBehaviour {
 			.Where(block => block.transform.position == BlockUtils.RoundPosition(position))
 			.First();
 	}
+
+	public Texture GetTexture(Block blockType) {
+		switch (blockType) {
+			case Block.Breakable:
+				return BlockUtils.GetTextureFromMaterial(breakableBlock.GetMaterial());
+			case Block.Unbreakable:
+				return BlockUtils.GetTextureFromMaterial(unbreakableBlock.GetMaterial());
+			case Block.Ground:
+				return BlockUtils.GetTextureFromMaterial(groundBlock.GetMaterial());
+			default:
+				return null;
+		}
+	}
 }
 

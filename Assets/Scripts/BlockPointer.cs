@@ -17,14 +17,21 @@ public class BlockPointer : MonoBehaviour {
 
 	public void SetGroundBlock() {
 		this.blockType = Block.Ground;
+		ChangeMaterialTexture();
 	}
 
 	public void SetBreakableBlock() {
 		this.blockType = Block.Breakable;
+		ChangeMaterialTexture();
 	}
 
 	public void SetUnbreakableBlock() {
 		this.blockType = Block.Unbreakable;
+		ChangeMaterialTexture();
+	}
+
+	void ChangeMaterialTexture() {
+		gameObject.GetComponent<Renderer>().material.SetTexture("_MainTex", StageManager.Instance.GetTexture(blockType));
 	}
 
 	// Use this for initialization

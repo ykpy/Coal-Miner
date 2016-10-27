@@ -9,4 +9,12 @@ public static class BlockUtils {
 		position.z = Mathf.Round(position.z);
 		return position;
 	}
+
+	public static Texture GetTextureFromMaterial(Material material) {
+		return material.GetTexture("_MainTex");
+	}
+
+	public static Material GetMaterial(this GameObject obj) {
+		return obj.GetComponent<Renderer>().sharedMaterial;
+	}
 }
