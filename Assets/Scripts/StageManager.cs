@@ -28,13 +28,12 @@ public class StageManager : MonoBehaviour {
 	readonly Vector3 defaultWallScale = new Vector3(1f, 0.01f, 1f);
 
 	public InputField stageName;
-	public InputField fileName;
 
 	public InputField stageXInput;
 	public InputField stageYInput;
 	public InputField stageZInput;
 
-	public FileExplorer explorer;
+	public Text message;
 
 	void Awake() {
 		InitializeStage(stageX, stageY, stageZ);
@@ -43,10 +42,6 @@ public class StageManager : MonoBehaviour {
 
 	void Start() {
 		InitializeWall();
-	}
-
-	void Update() {
-		fileName.text = fileName.text.AddFileExtension(".dat");
 	}
 
 	void InitializeWall() {
@@ -125,23 +120,18 @@ public class StageManager : MonoBehaviour {
 		var fileDialog = new System.Windows.Forms.SaveFileDialog();
 		fileDialog.InitialDirectory = Stage.StageDataDirectoryPath;
 		fileDialog.CheckFileExists = false;
+		fileDialog.Filter = "Stage Data(*.dat)|*.dat";
 		if (fileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
 			SaveStage(RemoveFilePath(fileDialog.FileName));
 		}
-
-		return;
-
-
-		if (string.IsNullOrEmpty(fileName.text))
-			return;
-
-		SaveStage(fileName.text);
 	}
 
 	public void SaveStage(string fileName) {
 		string buffer = "";
 
+		// ステージ名が入力されていない場合、エラーメッセージを表示し、保存処理を終了する
 		if (string.IsNullOrEmpty(stageName.text)) {
+			message.text = MessageUtils.StageNameNullErrorMessage;
 			return;
 		}
 
@@ -162,6 +152,9 @@ public class StageManager : MonoBehaviour {
 		using (var writer = new StreamWriter(Application.dataPath + @"/../StageData/" + fileName)) {
 			writer.Write(buffer);
 		}
+
+		// 保存成功時のメッセージ表示
+		message.text = MessageUtils.StageDataSaveSuccessMessage;
 	}
 
 	public void OpenLoadFileDialog() {
@@ -175,7 +168,6 @@ public class StageManager : MonoBehaviour {
 	public void LoadStage(string fileName) {
 		stage = new Stage(LoadStageFile(Application.dataPath + @"/../StageData/" + fileName));
 		stageName.text = stage.StageName;
-		this.fileName.text = fileName;
 
 		stageX = stage.X;
 		stageY = stage.Y;
@@ -185,6 +177,8 @@ public class StageManager : MonoBehaviour {
 
 		InitializeStage(stage);
 		InitializeWall();
+
+		message.text = MessageUtils.StageDataLoadSuccessMessage;
 	}
 
 	public static string RemoveFilePath(string filePath) {

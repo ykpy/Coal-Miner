@@ -17,4 +17,10 @@ public static class MessageUtils {
 			return fileName;
 		return fileName + extension;
 	}
+
+	public const string StageNameNullErrorMessage = "ステージ名が入力されていません。";
+
+	public const string StageDataSaveSuccessMessage = "ステージデータを保存しました。";
+
+	public const string StageDataLoadSuccessMessage = "ステージデータを読み込みました。";
 }
