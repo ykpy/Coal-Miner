@@ -135,6 +135,8 @@ public class StageManager : MonoBehaviour {
 			return;
 		}
 
+
+		// ステージデータを文字列に変換する
 		buffer += stageName.text + "\n\n";
 
 		buffer += stage.X + " " + stage.Y + " " + stage.Z + "\n\n";
@@ -149,7 +151,7 @@ public class StageManager : MonoBehaviour {
 			buffer += "\n";
 		}
 
-		using (var writer = new StreamWriter(Application.dataPath + @"/../StageData/" + fileName)) {
+		using (var writer = new StreamWriter(Stage.StageDataDirectoryPath + fileName)) {
 			writer.Write(buffer);
 		}
 
@@ -166,7 +168,7 @@ public class StageManager : MonoBehaviour {
 	}
 
 	public void LoadStage(string fileName) {
-		stage = new Stage(LoadStageFile(Application.dataPath + @"/../StageData/" + fileName));
+		stage = new Stage(LoadStageFile(Stage.StageDataDirectoryPath + fileName));
 		stageName.text = stage.StageName;
 
 		stageX = stage.X;
