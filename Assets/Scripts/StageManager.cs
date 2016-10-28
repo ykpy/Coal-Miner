@@ -121,7 +121,17 @@ public class StageManager : MonoBehaviour {
 		return true;
 	}
 
-	public void SaveStage() {
+	public void OpenSaveDialog() {
+		var fileDialog = new System.Windows.Forms.SaveFileDialog();
+		fileDialog.InitialDirectory = Stage.StageDataDirectoryPath;
+		fileDialog.CheckFileExists = false;
+		if (fileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
+			SaveStage(RemoveFilePath(fileDialog.FileName));
+		}
+
+		return;
+
+
 		if (string.IsNullOrEmpty(fileName.text))
 			return;
 
@@ -154,11 +164,12 @@ public class StageManager : MonoBehaviour {
 		}
 	}
 
-	public void LoadStage() {
-		if (!explorer)
-			explorer = FindObjectOfType<FileExplorer>();
-
-		explorer.OpenDirectory(Application.dataPath + @"/../StageData/");
+	public void OpenLoadFileDialog() {
+		var fileDialog = new System.Windows.Forms.OpenFileDialog();
+		fileDialog.InitialDirectory = Stage.StageDataDirectoryPath;
+		if (fileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
+			LoadStage(RemoveFilePath(fileDialog.FileName));
+		}
 	}
 
 	public void LoadStage(string fileName) {
@@ -174,6 +185,10 @@ public class StageManager : MonoBehaviour {
 
 		InitializeStage(stage);
 		InitializeWall();
+	}
+
+	public static string RemoveFilePath(string filePath) {
+		return filePath.Split(new[] { Stage.StageDataDirectoryPath }, System.StringSplitOptions.RemoveEmptyEntries)[0];
 	}
 
 	string LoadStageFile(string filePath) {
