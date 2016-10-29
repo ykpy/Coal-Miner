@@ -17,14 +17,21 @@ public class BlockPointer : MonoBehaviour {
 
 	public void SetGroundBlock() {
 		this.blockType = Block.Ground;
+		ChangeMaterialTexture();
 	}
 
 	public void SetBreakableBlock() {
 		this.blockType = Block.Breakable;
+		ChangeMaterialTexture();
 	}
 
 	public void SetUnbreakableBlock() {
 		this.blockType = Block.Unbreakable;
+		ChangeMaterialTexture();
+	}
+
+	void ChangeMaterialTexture() {
+		gameObject.GetComponent<Renderer>().material.SetTexture("_MainTex", StageManager.Instance.GetTexture(blockType));
 	}
 
 	// Use this for initialization
@@ -55,6 +62,7 @@ public class BlockPointer : MonoBehaviour {
 			}
 		} else if (Input.GetMouseButtonDown(1)) {
 			if (hit.collider.tag == Tags.BLOCK) {
+				StageManager.Instance.EraseBlock(ConvertPositionToIndex(hit.collider.transform.position));
 				Destroy(hit.collider.gameObject);
 			}
 		}

@@ -1,6 +1,10 @@
 ﻿using System.Linq;
+using UnityEngine;
 
 public class Stage {
+
+	public static readonly string StageDataDirectoryPath = Application.dataPath + @"/../StageData/";
+
 
 	string stageName;
 	public string StageName {
@@ -52,7 +56,10 @@ public class Stage {
 	}
 
 	public Stage(string stageData) {
-		var lines = stageData.Split(new[] { '\n' }, System.StringSplitOptions.RemoveEmptyEntries);
+		var lines = stageData.Split(new[] { '\n', '\r' }, System.StringSplitOptions.RemoveEmptyEntries)
+			.Where(line => !line.StartsWith("#"))	// コメント行を取り除く
+			.ToArray();
+
 		stageName = lines[0];
 
 		var stageSize = lines[1].Split(' ').Select(size => uint.Parse(size)).ToArray();

@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using System.IO;
 using System.Linq;
 
+
 public class StageManager : MonoBehaviour {
 
 	static StageManager _instance;
@@ -31,6 +32,8 @@ public class StageManager : MonoBehaviour {
 	public InputField stageXInput;
 	public InputField stageYInput;
 	public InputField stageZInput;
+
+	public Text message;
 
 	void Awake() {
 		InitializeStage(stageX, stageY, stageZ);
@@ -108,16 +111,39 @@ public class StageManager : MonoBehaviour {
 		return AddBlock(index.x, index.y, index.z, blockType);
 	}
 
-	public void SaveStage() {
+	public bool EraseBlock(StageIndex index) {
+		stage[index.x, index.y, index.z] = Block.Empty;
+		return true;
+	}
+
+	public void OpenSaveDialog() {
+		var fileDialog = new System.Windows.Forms.SaveFileDialog();
+		fileDialog.InitialDirectory = Stage.StageDataDirectoryPath;
+		fileDialog.CheckFileExists = false;
+		fileDialog.Filter = "Stage Data(*.dat)|*.dat";
+		if (fileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
+			SaveStage(RemoveFilePath(fileDialog.FileName));
+		}
+	}
+
+	public void SaveStage(string fileName) {
 		string buffer = "";
 
+		// ステージ名が入力されていない場合、エラーメッセージを表示し、保存処理を終了する
+		if (string.IsNullOrEmpty(stageName.text)) {
+			message.text = MessageUtils.StageNameNullErrorMessage;
+			return;
+		}
+
+
+		// ステージデータを文字列に変換する
 		buffer += stageName.text + "\n\n";
 
-		buffer += stageX + " " + stageY + " " + stageZ + "\n\n";
+		buffer += stage.X + " " + stage.Y + " " + stage.Z + "\n\n";
 
-		for (uint j = 0; j < stageY; j++) {
-			for (uint k = 0; k < stageZ; k++) {
-				for (uint i = 0; i < stageX; i++) {
+		for (uint j = 0; j < stage.Y; j++) {
+			for (uint k = 0; k < stage.Z; k++) {
+				for (uint i = 0; i < stage.X; i++) {
 					buffer += stage[i, j, k].ToInt() + " ";
 				}
 				buffer += "\n";
@@ -125,13 +151,24 @@ public class StageManager : MonoBehaviour {
 			buffer += "\n";
 		}
 
-		using (var writer = new StreamWriter(Application.dataPath + @"/../stage.dat")) {
+		using (var writer = new StreamWriter(Stage.StageDataDirectoryPath + fileName)) {
 			writer.Write(buffer);
+		}
+
+		// 保存成功時のメッセージ表示
+		message.text = MessageUtils.StageDataSaveSuccessMessage;
+	}
+
+	public void OpenLoadFileDialog() {
+		var fileDialog = new System.Windows.Forms.OpenFileDialog();
+		fileDialog.InitialDirectory = Stage.StageDataDirectoryPath;
+		if (fileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
+			LoadStage(RemoveFilePath(fileDialog.FileName));
 		}
 	}
 
-	public void LoadStage() {
-		stage = new Stage(LoadStageFile(Application.dataPath + @"/../stage.dat"));
+	public void LoadStage(string fileName) {
+		stage = new Stage(LoadStageFile(Stage.StageDataDirectoryPath + fileName));
 		stageName.text = stage.StageName;
 
 		stageX = stage.X;
@@ -141,6 +178,13 @@ public class StageManager : MonoBehaviour {
 		ShowStageSize();
 
 		InitializeStage(stage);
+		InitializeWall();
+
+		message.text = MessageUtils.StageDataLoadSuccessMessage;
+	}
+
+	public static string RemoveFilePath(string filePath) {
+		return filePath.Split(new[] { Stage.StageDataDirectoryPath }, System.StringSplitOptions.RemoveEmptyEntries)[0];
 	}
 
 	string LoadStageFile(string filePath) {
@@ -166,6 +210,25 @@ public class StageManager : MonoBehaviour {
 					action(stage, i, j, k);
 				}
 			}
+		}
+	}
+
+	public GameObject FindBlockByPosition(Vector3 position) {
+		return GameObject.FindGameObjectsWithTag(Tags.BLOCK)
+			.Where(block => block.transform.position == BlockUtils.RoundPosition(position))
+			.First();
+	}
+
+	public Texture GetTexture(Block blockType) {
+		switch (blockType) {
+			case Block.Breakable:
+				return BlockUtils.GetTextureFromMaterial(breakableBlock.GetMaterial());
+			case Block.Unbreakable:
+				return BlockUtils.GetTextureFromMaterial(unbreakableBlock.GetMaterial());
+			case Block.Ground:
+				return BlockUtils.GetTextureFromMaterial(groundBlock.GetMaterial());
+			default:
+				return null;
 		}
 	}
 }
