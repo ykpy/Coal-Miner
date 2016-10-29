@@ -16,7 +16,6 @@ public class CameraController : MonoBehaviour {
 			return _wheelScroll;
 		}
 	}
-
 	public int WheelScrollInvert = -1;
 
 	void Update () {

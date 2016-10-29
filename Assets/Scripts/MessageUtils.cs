@@ -23,4 +23,6 @@ public static class MessageUtils {
 	public const string StageDataSaveSuccessMessage = "ステージデータを保存しました。";
 
 	public const string StageDataLoadSuccessMessage = "ステージデータを読み込みました。";
+
+	public const string StageDataNotSavedWarningMessage = "保存されていない変更があります。";
 }

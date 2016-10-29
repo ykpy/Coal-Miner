@@ -35,6 +35,8 @@ public class StageManager : MonoBehaviour {
 
 	public Text message;
 
+	public bool edited = false;
+
 	void Awake() {
 		InitializeStage(stageX, stageY, stageZ);
 		ShowStageSize();
@@ -104,6 +106,9 @@ public class StageManager : MonoBehaviour {
 
 		stage[x, y, z] = blockType;
 		Instantiate(GetBlockObjectByBlockType(blockType), new Vector3(x, y, z), Quaternion.identity);
+
+		edited = true;
+
 		return true;
 	}
 
@@ -113,10 +118,18 @@ public class StageManager : MonoBehaviour {
 
 	public bool EraseBlock(StageIndex index) {
 		stage[index.x, index.y, index.z] = Block.Empty;
+
+		edited = true;
 		return true;
 	}
 
 	public void OpenSaveDialog() {
+		// ステージ名が入力されていない場合、エラーメッセージを表示し、保存処理を終了する
+		if (string.IsNullOrEmpty(stageName.text)) {
+			message.text = MessageUtils.StageNameNullErrorMessage;
+			return;
+		}
+
 		var fileDialog = new System.Windows.Forms.SaveFileDialog();
 		fileDialog.InitialDirectory = Stage.StageDataDirectoryPath;
 		fileDialog.CheckFileExists = false;
@@ -128,13 +141,6 @@ public class StageManager : MonoBehaviour {
 
 	public void SaveStage(string fileName) {
 		string buffer = "";
-
-		// ステージ名が入力されていない場合、エラーメッセージを表示し、保存処理を終了する
-		if (string.IsNullOrEmpty(stageName.text)) {
-			message.text = MessageUtils.StageNameNullErrorMessage;
-			return;
-		}
-
 
 		// ステージデータを文字列に変換する
 		buffer += stageName.text + "\n\n";
@@ -157,9 +163,14 @@ public class StageManager : MonoBehaviour {
 
 		// 保存成功時のメッセージ表示
 		message.text = MessageUtils.StageDataSaveSuccessMessage;
+		edited = false;
 	}
 
 	public void OpenLoadFileDialog() {
+		if (edited) {
+			message.text = MessageUtils.StageDataNotSavedWarningMessage;
+		}
+
 		var fileDialog = new System.Windows.Forms.OpenFileDialog();
 		fileDialog.InitialDirectory = Stage.StageDataDirectoryPath;
 		if (fileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
