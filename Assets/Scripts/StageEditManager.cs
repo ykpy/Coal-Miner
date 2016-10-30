@@ -31,7 +31,7 @@ public class StageEditManager : SingletonMonoBehaviour<StageEditManager> {
 			Directory.CreateDirectory(Stage.StageDataDirectoryPath + "tmp");
 		}
 		string tempStageData = @"tmp/test.dat";
-		SaveStage(tempStageData, StageManager.Instance.Stage);
+		SaveStage(tempStageData, uiManager.GetStageData(StageManager.Instance.Stage));
 		StageSelectManager.SelectedStageFileName = tempStageData;
 		SceneManager.LoadScene("main");
 	}

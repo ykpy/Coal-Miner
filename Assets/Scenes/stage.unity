@@ -858,6 +858,11 @@ Prefab:
       propertyPath: mouseLook.lockCursor
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114000012944391964, guid: ff8242e8b6c18d14d9d157c7b3746f54,
+        type: 2}
+      propertyPath: deadLineHeight
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: ff8242e8b6c18d14d9d157c7b3746f54, type: 2}
   m_IsPrefabParent: 0

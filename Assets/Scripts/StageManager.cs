@@ -47,11 +47,12 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
 		if (StageSelectManager.SelectedStageFileName != null) {
 			LoadStage(StageSelectManager.SelectedStageFileName);
 			game = new Game(stage);
+			UIManager.ShowGameInformation(game);
 		}
 	}
 
 	void Update() {
-		if (game.isStarted) {
+		if (game != null && game.isStarted) {
 			if (!game.IsTimeOver) {
 				game.limitTime -= Time.deltaTime;
 			}
@@ -274,7 +275,11 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
 	}
 
 	public void TouchGoal() {
-		Debug.Log("goal!!");
+		UIManager.ShowMessage("クリアしました");
+	}
+
+	public void DiePlayer() {
+		UIManager.ShowMessage("死亡しました");
 	}
 }
 

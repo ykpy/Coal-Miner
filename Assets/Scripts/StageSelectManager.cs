@@ -3,7 +3,7 @@ using System.Collections;
 
 public class StageSelectManager : MonoBehaviour {
 
-	public static string SelectedStageFileName = "tutorial.dat";
+	public static string SelectedStageFileName;
 
 	// Use this for initialization
 	void Start () {

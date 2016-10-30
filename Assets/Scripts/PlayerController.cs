@@ -18,6 +18,10 @@ public class PlayerController : MonoBehaviour {
 	bool prevGrounded = false;
 	bool jumping = false;
 
+	float fallDistance;
+	Vector3 prevPosition;
+	public float deadLineHeight = 1.5f;
+
 	CapsuleCollider capsuleCollider;
 
 	void Awake() {
@@ -28,6 +32,7 @@ public class PlayerController : MonoBehaviour {
 		mouseLook.Init(transform, cam.transform);
 
 		capsuleCollider = GetComponent<CapsuleCollider>();
+		prevPosition = transform.position;
 	}
 
 	void Update() {
@@ -56,12 +61,20 @@ public class PlayerController : MonoBehaviour {
 		if (grounded) {
 			if (jump) {
 				moveDirection.y = jumpPower;
+				fallDistance = deadLineHeight;
+			}
+		} else {
+			var delta = prevPosition.y - transform.position.y;
+			if (delta > 0f) {
+				fallDistance -= Mathf.Abs(delta);
 			}
 		}
 		jump = false;
 
 
 		rb.velocity = moveDirection;
+
+		prevPosition = transform.position;
 	}
 
 	void RotateView() {
@@ -85,8 +98,11 @@ public class PlayerController : MonoBehaviour {
 			grounded = false;
 		}
 
-		if (!prevGrounded && grounded && jumping) {
-			jumping = false;
+		if (!prevGrounded && grounded) {
+			if (fallDistance < 0f) {
+				StageManager.Instance.DiePlayer();
+			}
+			fallDistance = deadLineHeight;
 		} 
 	}
 
