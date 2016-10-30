@@ -4,20 +4,14 @@ using System.IO;
 using System.Linq;
 
 
-public class StageManager : MonoBehaviour {
-
-	static StageManager _instance;
-	public static StageManager Instance {
-		get {
-			return _instance ?? (_instance = FindObjectOfType<StageManager>());
-		}
-	}
-
-	public uint stageX;
-	public uint stageY;
-	public uint stageZ;
+public class StageManager : SingletonMonoBehaviour<StageManager> {
 
 	Stage stage;
+	GameObject[,,] stageBlockObjects;
+	Transform startTransform;
+	public Transform stageTransform;
+
+	public GameObject player;
 
 	#region block
 	public GameObject groundBlock;
@@ -28,7 +22,6 @@ public class StageManager : MonoBehaviour {
 	#endregion
 
 	public GameObject wall;
-
 	readonly Vector3 defaultWallScale = new Vector3(1f, 0.01f, 1f);
 
 	#region UI input
@@ -46,8 +39,11 @@ public class StageManager : MonoBehaviour {
 
 	bool edited = false;
 
-	void Awake() {
-		InitializeStage(stageX, stageY, stageZ);
+	protected override void Awake() {
+		base.Awake();
+
+		stageXInput.text = stageYInput.text = stageZInput.text = "10";
+		InitializeStage(uint.Parse(stageXInput.text), uint.Parse(stageYInput.text), uint.Parse(stageZInput.text));
 		ShowStageSize();
 
 		createInput.text = "0";
@@ -56,17 +52,30 @@ public class StageManager : MonoBehaviour {
 
 	void Start() {
 		InitializeWall();
+
+		SetPlayerToStartPosition();
 	}
 
+	/// <summary>
+	/// 底面サイズを初期化します
+	/// </summary>
 	void InitializeWall() {
 		wall.transform.localScale = defaultWallScale;
-		wall.transform.localScale = new Vector3(stageX, wall.transform.localScale.y, stageZ);
-		wall.transform.position = new Vector3(stageX - 1, wall.transform.position.y * 2, stageZ - 1) / 2;
+		wall.transform.localScale = new Vector3(stage.X, wall.transform.localScale.y, stage.Z);
+		wall.transform.position = new Vector3(stage.X - 1, wall.transform.position.y * 2, stage.Z - 1) / 2;
 	}
 
+	/// <summary>
+	/// ステージ全体を初期化します
+	/// </summary>
+	/// <param name="x">幅</param>
+	/// <param name="y">高さ</param>
+	/// <param name="z">奥行き</param>
+	/// <returns></returns>
 	bool InitializeStage(uint x, uint y, uint z) {
 		DestroyAllBlocks();
 		stage = new Stage(x, y, z);
+		stageBlockObjects = new GameObject[x, y, z];
 
 		DoToStage((s, i, j, k) => {
 			AddBlock(new StageIndex { x = i, y = j, z = k }, s[i, j, k]);
@@ -75,30 +84,45 @@ public class StageManager : MonoBehaviour {
 		return true;
 	}
 
+	/// <summary>
+	/// ステージサイズを変更します
+	/// </summary>
+	/// <param name="stage">元となるステージ</param>
+	/// <returns></returns>
 	bool InitializeStage(Stage stage) {
-		stageX = stage.X;
-		stageY = stage.Y;
-		stageZ = stage.Z;
-
 		DestroyAllBlocks();
 		this.stage = stage;
+		stageBlockObjects = new GameObject[stage.X, stage.Y, stage.Z];
+
 		DoToStage((s, i, j, k) => {
 			AddBlock(new StageIndex { x = i, y = j, z = k }, s[i, j, k]);
 		});
+
 		return true;
 	}
 
+	/// <summary>
+	/// 全てのブロックを破棄します
+	/// </summary>
 	void DestroyAllBlocks() {
 		foreach (var block in GameObject.FindGameObjectsWithTag(Tags.BLOCK)) {
 			DestroyImmediate(block);
 		}
 	}
 
+	/// <summary>
+	/// ステージサイズを変更します
+	/// </summary>
 	public void ResizeStage() {
 		InitializeStage(new Stage(uint.Parse(stageXInput.text), uint.Parse(stageYInput.text), uint.Parse(stageZInput.text), stage));
 		InitializeWall();
 	}
 
+	/// <summary>
+	/// ブロックタイプからブロックオブジェクトを取得します
+	/// </summary>
+	/// <param name="blockType">ブロックタイプ</param>
+	/// <returns>タイプに対応するブロックゲームオブジェクト</returns>
 	GameObject GetBlockObjectByBlockType(Block blockType) {
 		switch (blockType) {
 			case Block.Breakable:
@@ -116,6 +140,14 @@ public class StageManager : MonoBehaviour {
 		}
 	}
 
+	/// <summary>
+	/// ステージにブロックを追加します
+	/// </summary>
+	/// <param name="x">X座標</param>
+	/// <param name="y">Y座標</param>
+	/// <param name="z">Z座標</param>
+	/// <param name="blockType">ブロックタイプ</param>
+	/// <returns>追加に成功した場合、true</returns>
 	public bool AddBlock(uint x, uint y, uint z, Block blockType) {
 		if (blockType == Block.Empty)
 			return false;
@@ -123,23 +155,44 @@ public class StageManager : MonoBehaviour {
 		stage[x, y, z] = blockType;
 		var obj = Instantiate(GetBlockObjectByBlockType(blockType), new Vector3(x, y, z), Quaternion.identity) as GameObject;
 		obj.GetComponent<BlockStatus>().stageIndex = new StageIndex() { x = x, y = y, z = z };
+		obj.transform.SetParent(stageTransform);
+
+		stageBlockObjects[x, y, z] = obj;
+
+		if (blockType == Block.Start) {
+			startTransform = obj.transform;
+		}
 
 		edited = true;
 
 		return true;
 	}
 
+	/// <summary>
+	/// ブロックを追加します
+	/// </summary>
+	/// <param name="index"></param>
+	/// <param name="blockType"></param>
+	/// <returns></returns>
 	public bool AddBlock(StageIndex index, Block blockType) {
 		return AddBlock(index.x, index.y, index.z, blockType);
 	}
 
+	/// <summary>
+	/// ステージからブロックを消去します
+	/// </summary>
+	/// <param name="index"></param>
+	/// <returns></returns>
 	public bool EraseBlock(StageIndex index) {
 		stage[index.x, index.y, index.z] = Block.Empty;
-
+		Destroy(stageBlockObjects[index.x, index.y, index.z]);
 		edited = true;
 		return true;
 	}
 
+	/// <summary>
+	/// ステージデータを保存するファイルダイアログを表示します
+	/// </summary>
 	public void OpenSaveDialog() {
 		// ステージ名が入力されていない場合、エラーメッセージを表示し、保存処理を終了する
 		if (string.IsNullOrEmpty(stageName.text)) {
@@ -160,6 +213,10 @@ public class StageManager : MonoBehaviour {
 		}
 	}
 
+	/// <summary>
+	/// ステージデータをファイルに書き出します
+	/// </summary>
+	/// <param name="fileName">ファイル名</param>
 	public void SaveStage(string fileName) {
 		string buffer = "";
 
@@ -195,6 +252,9 @@ public class StageManager : MonoBehaviour {
 		edited = false;
 	}
 
+	/// <summary>
+	/// ステージデータファイルを読み込むファイルダイアログを表示します
+	/// </summary>
 	public void OpenLoadFileDialog() {
 		if (edited) {
 			message.text = MessageUtils.StageDataNotSavedWarningMessage;
@@ -207,13 +267,13 @@ public class StageManager : MonoBehaviour {
 		}
 	}
 
+	/// <summary>
+	/// ステージデータファイルを読み込みます
+	/// </summary>
+	/// <param name="fileName">ファイル名</param>
 	public void LoadStage(string fileName) {
 		stage = new Stage(LoadStageFile(Stage.StageDataDirectoryPath + fileName));
 		stageName.text = stage.StageName;
-
-		stageX = stage.X;
-		stageY = stage.Y;
-		stageZ = stage.Z;
 
 		ShowStageSize();
 
@@ -224,12 +284,24 @@ public class StageManager : MonoBehaviour {
 		InitializeWall();
 
 		message.text = MessageUtils.StageDataLoadSuccessMessage;
+
+		SetPlayerToStartPosition();
 	}
 
+	/// <summary>
+	/// ステージデータファイルパスから、ディレクトリパスを取り除き、ファイル名を抜き出します
+	/// </summary>
+	/// <param name="filePath">ファイルパス</param>
+	/// <returns>ファイル名</returns>
 	public static string RemoveFilePath(string filePath) {
 		return filePath.Split(new[] { Stage.StageDataDirectoryPath }, System.StringSplitOptions.RemoveEmptyEntries)[0];
 	}
 
+	/// <summary>
+	/// ステージデータファイルを文字列として読み込みます
+	/// </summary>
+	/// <param name="filePath">ファイルパス</param>
+	/// <returns>ステージデータファイルの内容</returns>
 	string LoadStageFile(string filePath) {
 		string buffer = "";
 		using (var reader = new StreamReader(filePath)) {
@@ -238,30 +310,47 @@ public class StageManager : MonoBehaviour {
 		return buffer;
 	}
 
+	/// <summary>
+	/// ステージサイズを画面に表示します
+	/// </summary>
 	void ShowStageSize() {
-		stageXInput.text = stageX.ToString();
-		stageYInput.text = stageY.ToString();
-		stageZInput.text = stageZ.ToString();
+		stageXInput.text = stage.X.ToString();
+		stageYInput.text = stage.Y.ToString();
+		stageZInput.text = stage.Z.ToString();
 	}
 
-	delegate void ActionStage(Stage stage, uint i, uint j, uint k);
 
+	delegate void ActionStage(Stage stage, uint i, uint j, uint k);
+	/// <summary>
+	/// ステージ配列に対して処理を行います
+	/// </summary>
+	/// <param name="action">処理</param>
 	void DoToStage(ActionStage action) {
-		for (uint j = 0; j < stageY; j++) {
-			for (uint k = 0; k < stageZ; k++) {
-				for (uint i = 0; i < stageX; i++) {
+		for (uint j = 0; j < stage.Y; j++) {
+			for (uint k = 0; k < stage.Z; k++) {
+				for (uint i = 0; i < stage.X; i++) {
 					action(stage, i, j, k);
 				}
 			}
 		}
 	}
 
+	/// <summary>
+	/// ワールド座標から、ブロックオブジェクトを取得します
+	/// </summary>
+	/// <param name="position">ワールド座標</param>
+	/// <returns>指定のワールド座標に一致するブロックオブジェクト</returns>
 	public GameObject FindBlockByPosition(Vector3 position) {
 		return GameObject.FindGameObjectsWithTag(Tags.BLOCK)
 			.Where(block => block.transform.position == BlockUtils.RoundPosition(position))
 			.First();
 	}
 
+	/// <summary>
+	/// ブロックタイプからテクスチャを取得します
+	/// </summary>
+	/// <param name="blockType">ブロックタイプ</param>
+	/// <returns>一致するテクスチャ</returns>
 	public Texture GetTexture(Block blockType) {
 		switch (blockType) {
 			case Block.Breakable:
@@ -275,6 +364,10 @@ public class StageManager : MonoBehaviour {
 		}
 	}
 
+	/// <summary>
+	/// 入力項目に不正な値が入力されていないかチェックします
+	/// </summary>
+	/// <returns>全て正常の場合、true</returns>
 	bool ValidateInputField() {
 
 		if (string.IsNullOrEmpty(stageName.text)) {
@@ -299,6 +392,11 @@ public class StageManager : MonoBehaviour {
 		}
 
 		return true;
+	}
+
+	void SetPlayerToStartPosition() {
+		if (startTransform)
+			player.transform.position = startTransform.position;
 	}
 }
 

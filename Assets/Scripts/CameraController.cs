@@ -10,6 +10,8 @@ public class CameraController : MonoBehaviour {
 
 	Vector3 rotateAxis;
 
+	Camera cam;
+
 	float _wheelScroll = 0f;
 	public float WheelScroll {
 		get {
@@ -18,7 +20,14 @@ public class CameraController : MonoBehaviour {
 	}
 	public int WheelScrollInvert = -1;
 
+	void Start() {
+		cam = GetComponent<Camera>();
+	}
+
 	void Update () {
+		if (CameraSwitcher.Instance.MainCamera != cam)
+			return;
+
 		// カメラ移動
 		if (!Input.GetKey(KeyCode.LeftShift)) {
 			moveDirection.x = Input.GetAxisRaw("Horizontal");

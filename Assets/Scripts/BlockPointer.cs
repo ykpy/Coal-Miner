@@ -6,12 +6,16 @@ public class BlockPointer : MonoBehaviour {
 	RaycastHit hit;
 
 	public GameObject cube;
+	Renderer cubeRenderer;
+	Color defaultColor;
 
 	public float rayDistance = 10f;
 
 	public Text pointerPositionText;
 
 	StageIndex pointerIndex;
+
+	GameObject targetBlock;
 
 	Block blockType;
 
@@ -41,7 +45,11 @@ public class BlockPointer : MonoBehaviour {
 	}
 
 	void ChangeMaterialTexture() {
-		gameObject.GetComponent<Renderer>().material.SetTexture("_MainTex", StageManager.Instance.GetTexture(blockType));
+		cubeRenderer.material.SetTexture("_MainTex", StageManager.Instance.GetTexture(blockType));
+	}
+
+	void Awake() {
+		cubeRenderer = GetComponent<Renderer>();
 	}
 
 	// Use this for initialization
@@ -55,7 +63,7 @@ public class BlockPointer : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-		var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+		var ray = CameraSwitcher.Instance.MainCamera.ScreenPointToRay(Input.mousePosition);
 
 		if (Physics.Raycast(ray, out hit, rayDistance)) {
 			hit.point = new Vector3(hit.point.x, hit.point.y + 0.5f, hit.point.z);
@@ -70,11 +78,28 @@ public class BlockPointer : MonoBehaviour {
 			if (hit.collider != null) {
 				StageManager.Instance.AddBlock(ConvertPositionToIndex(hit.point), blockType);
 			}
-		} else if (Input.GetMouseButtonDown(1)) {
-			if (hit.collider.tag == Tags.BLOCK) {
-				StageManager.Instance.EraseBlock(ConvertPositionToIndex(hit.collider.transform.position));
-				Destroy(hit.collider.gameObject);
+		} else if (Input.GetMouseButton(1)) {
+			// 右クリックされたままの状態のとき、ポインター先のブロックを取得する
+			// ポインターを非表示にし、ポインター先のブロックの色を変化させる
+			cubeRenderer.enabled = false;
+
+			if (hit.collider == null || (hit.collider != null && hit.collider.gameObject != targetBlock)) {
+				if (targetBlock) {
+					targetBlock.GetComponent<Renderer>().material.color = defaultColor;
+					targetBlock = null;
+				}
 			}
+			if (hit.collider != null && hit.collider.tag == Tags.BLOCK && hit.collider.gameObject != targetBlock) {
+				targetBlock = hit.collider.gameObject;
+				defaultColor = targetBlock.GetComponent<Renderer>().material.color;
+				targetBlock.GetComponent<Renderer>().material.color = new Color(0, 0, 0, 0);
+			}
+		} else if (Input.GetMouseButtonUp(1)) {
+			if (targetBlock) {
+				StageManager.Instance.EraseBlock(ConvertPositionToIndex(targetBlock.transform.position));
+			}
+			targetBlock = null;
+			cubeRenderer.enabled = true;
 		}
 
 		pointerPositionText.text = pointerIndex.ToString();
