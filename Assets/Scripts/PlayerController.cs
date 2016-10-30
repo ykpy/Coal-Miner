@@ -90,4 +90,11 @@ public class PlayerController : MonoBehaviour {
 		} 
 	}
 
+	void OnTriggerEnter(Collider col) {
+		if (col.tag == Tags.BLOCK) {
+			if (col.GetComponent<BlockStatus>().blockType == Block.Goal) {
+				StageManager.Instance.TouchGoal();
+			}
+		}
+	}
 }

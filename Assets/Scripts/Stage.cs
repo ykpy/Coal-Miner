@@ -11,6 +11,9 @@ public class Stage {
 		get {
 			return stageName;
 		}
+		set {
+			stageName = value;
+		}
 	}
 
 	public uint breakTime;
