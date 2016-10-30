@@ -1,9 +1,16 @@
+# StageName
 チュートリアル風
 
+# TimeLimit
+30
+
+# Create Break
 3 3
 
+# StageSize X Y Z
 10 10 10
 
+# Stage
 1 1 1 1 1 1 1 1 1 1 
 1 1 1 1 1 1 1 1 1 1 
 1 1 1 1 1 1 1 1 1 1 

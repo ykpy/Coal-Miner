@@ -16,6 +16,8 @@ public class Stage {
 	public uint breakTime;
 	public uint createTime;
 
+	public int timeLimit;
+
 	Block[,,] blocks;
 	uint x;
 	uint y;
@@ -66,13 +68,15 @@ public class Stage {
 		// ステージ名
 		stageName = lines[0];
 
+		timeLimit = int.Parse(lines[1]);
+
 		// ブロック生成・破壊可能回数
-		var times = lines[1].Split(' ').Select(time => uint.Parse(time)).ToArray();
+		var times = lines[2].Split(' ').Select(time => uint.Parse(time)).ToArray();
 		createTime = times[0];
 		breakTime = times[1];
 
 		// ステージサイズの読み込み
-		var stageSize = lines[2].Split(' ').Select(size => uint.Parse(size)).ToArray();
+		var stageSize = lines[3].Split(' ').Select(size => uint.Parse(size)).ToArray();
 		x = stageSize[0];
 		y = stageSize[1];
 		z = stageSize[2];
@@ -82,7 +86,7 @@ public class Stage {
 		// ステージデータ
 		for (uint j = 0; j < y; j++) {
 			for (uint k = 0; k < z; k++) {
-				var xLine = lines[j * z + k + 3]
+				var xLine = lines[j * z + k + 4]
 							.Split(new[] {' '}, System.StringSplitOptions.RemoveEmptyEntries)
 							.Select(l => uint.Parse(l)).ToArray();
 				for (uint i = 0; i < x; i++) {
@@ -115,4 +119,12 @@ public class Stage {
 
 		return blocks;
 	}
+}
+
+public class StageDataTag {
+	public const string StageName = "StageName";
+	public const string TimeLimit = "TimeLimit";
+	public const string BlockCreateBreakNum = "Create Break";
+	public const string StageSize = "StageSize X Y Z";
+	public const string Stage = "Stage";
 }

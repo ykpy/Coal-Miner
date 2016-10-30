@@ -33,6 +33,8 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
 
 	public InputField createInput;
 	public InputField breakInput;
+
+	public InputField timeLimitInput;
 	#endregion
 
 	public Text message;
@@ -48,6 +50,8 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
 
 		createInput.text = "0";
 		breakInput.text = "0";
+
+		timeLimitInput.text = "60";
 	}
 
 	void Start() {
@@ -223,15 +227,24 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
 		// ステージデータを文字列に変換する
 
 		// ステージ名
+		buffer += GetCommentString(StageDataTag.StageName);
 		buffer += stageName.text + "\n\n";
 
+		// 制限時間
+		buffer += GetCommentString(StageDataTag.TimeLimit);
+		buffer += timeLimitInput.text + "\n\n";
+
 		// ブロックを生成・破壊できる回数
+		buffer += GetCommentString(StageDataTag.BlockCreateBreakNum);
 		buffer += createInput.text + " " + breakInput.text + "\n\n";
 
 		// ステージサイズ
+		buffer += GetCommentString(StageDataTag.StageSize);
 		buffer += stage.X + " " + stage.Y + " " + stage.Z + "\n\n";
 
 		// ステージ配列
+		buffer += GetCommentString(StageDataTag.Stage);
+		buffer += GetCommentString("==========", 2);
 		for (uint j = 0; j < stage.Y; j++) {
 			for (uint k = 0; k < stage.Z; k++) {
 				for (uint i = 0; i < stage.X; i++) {
@@ -241,6 +254,7 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
 			}
 			buffer += "\n";
 		}
+		buffer += GetCommentString("==========");
 
 		// ファイルへの書き込み
 		using (var writer = new StreamWriter(Stage.StageDataDirectoryPath + fileName)) {
@@ -250,6 +264,14 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
 		// 保存成功時のメッセージ表示
 		message.text = MessageUtils.StageDataSaveSuccessMessage;
 		edited = false;
+	}
+
+	string GetCommentString(string str, int newLineCount = 1) {
+		str = "# " + str;
+		for (int i = 0; i < newLineCount; i++) {
+			str += "\n";
+		}
+		return str;
 	}
 
 	/// <summary>
@@ -279,6 +301,7 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
 
 		createInput.text = stage.createTime.ToString();
 		breakInput.text = stage.breakTime.ToString();
+		timeLimitInput.text = stage.timeLimit.ToString();
 
 		InitializeStage(stage);
 		InitializeWall();
