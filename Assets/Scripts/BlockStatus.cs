@@ -8,15 +8,21 @@ public class BlockStatus : MonoBehaviour {
 
 	public StageIndex stageIndex;
 
+	public bool singleton = false;
+
 	// Use this for initialization
 	void Start () {
-		foreach (var block in GameObject.FindGameObjectsWithTag(Tags.BLOCK).Where(block => block.transform.position == BlockUtils.RoundPosition(transform.position))
+		var allBlocks = GameObject.FindGameObjectsWithTag(Tags.BLOCK);
+		foreach (var block in allBlocks.Where(block => block.transform.position == BlockUtils.RoundPosition(transform.position))
 			.Where(block => block != gameObject).ToArray())
 			Destroy(block);
+
+		if (singleton) {
+			foreach (var block in allBlocks.Where(block => block != gameObject && block.GetComponent<BlockStatus>().blockType == blockType)) {
+				Destroy(block);
+				StageManager.Instance.EraseBlock(block.GetComponent<BlockStatus>().stageIndex);
+			}
+		}
 	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+
 }

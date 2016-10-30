@@ -3,6 +3,8 @@
 	Ground,
 	Breakable,
 	Unbreakable,
+	Start,
+	Goal,
 }
 
 public static class BlockExtensions {

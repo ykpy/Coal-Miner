@@ -19,27 +19,39 @@ public class StageManager : MonoBehaviour {
 
 	Stage stage;
 
+	#region block
 	public GameObject groundBlock;
 	public GameObject unbreakableBlock;
 	public GameObject breakableBlock;
+	public GameObject startBlock;
+	public GameObject goalBlock;
+	#endregion
 
 	public GameObject wall;
 
 	readonly Vector3 defaultWallScale = new Vector3(1f, 0.01f, 1f);
 
+	#region UI input
 	public InputField stageName;
 
 	public InputField stageXInput;
 	public InputField stageYInput;
 	public InputField stageZInput;
 
+	public InputField createInput;
+	public InputField breakInput;
+	#endregion
+
 	public Text message;
 
-	public bool edited = false;
+	bool edited = false;
 
 	void Awake() {
 		InitializeStage(stageX, stageY, stageZ);
 		ShowStageSize();
+
+		createInput.text = "0";
+		breakInput.text = "0";
 	}
 
 	void Start() {
@@ -95,8 +107,12 @@ public class StageManager : MonoBehaviour {
 				return groundBlock;
 			case Block.Unbreakable:
 				return unbreakableBlock;
+			case Block.Start:
+				return startBlock;
+			case Block.Goal:
+				return goalBlock;
 			default:
-				return null;
+				throw new System.Exception();
 		}
 	}
 
@@ -105,7 +121,8 @@ public class StageManager : MonoBehaviour {
 			return false;
 
 		stage[x, y, z] = blockType;
-		Instantiate(GetBlockObjectByBlockType(blockType), new Vector3(x, y, z), Quaternion.identity);
+		var obj = Instantiate(GetBlockObjectByBlockType(blockType), new Vector3(x, y, z), Quaternion.identity) as GameObject;
+		obj.GetComponent<BlockStatus>().stageIndex = new StageIndex() { x = x, y = y, z = z };
 
 		edited = true;
 
@@ -130,10 +147,14 @@ public class StageManager : MonoBehaviour {
 			return;
 		}
 
+		if (!ValidateInputField()) {
+			return;
+		}
+
 		var fileDialog = new System.Windows.Forms.SaveFileDialog();
 		fileDialog.InitialDirectory = Stage.StageDataDirectoryPath;
 		fileDialog.CheckFileExists = false;
-		fileDialog.Filter = "Stage Data(*.dat)|*.dat";
+		fileDialog.Filter = "Stage Data (*.dat)|*.dat";
 		if (fileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
 			SaveStage(RemoveFilePath(fileDialog.FileName));
 		}
@@ -143,10 +164,17 @@ public class StageManager : MonoBehaviour {
 		string buffer = "";
 
 		// ステージデータを文字列に変換する
+
+		// ステージ名
 		buffer += stageName.text + "\n\n";
 
+		// ブロックを生成・破壊できる回数
+		buffer += createInput.text + " " + breakInput.text + "\n\n";
+
+		// ステージサイズ
 		buffer += stage.X + " " + stage.Y + " " + stage.Z + "\n\n";
 
+		// ステージ配列
 		for (uint j = 0; j < stage.Y; j++) {
 			for (uint k = 0; k < stage.Z; k++) {
 				for (uint i = 0; i < stage.X; i++) {
@@ -157,6 +185,7 @@ public class StageManager : MonoBehaviour {
 			buffer += "\n";
 		}
 
+		// ファイルへの書き込み
 		using (var writer = new StreamWriter(Stage.StageDataDirectoryPath + fileName)) {
 			writer.Write(buffer);
 		}
@@ -187,6 +216,9 @@ public class StageManager : MonoBehaviour {
 		stageZ = stage.Z;
 
 		ShowStageSize();
+
+		createInput.text = stage.createTime.ToString();
+		breakInput.text = stage.breakTime.ToString();
 
 		InitializeStage(stage);
 		InitializeWall();
@@ -241,6 +273,32 @@ public class StageManager : MonoBehaviour {
 			default:
 				return null;
 		}
+	}
+
+	bool ValidateInputField() {
+
+		if (string.IsNullOrEmpty(stageName.text)) {
+			return false;
+		}
+
+		if (string.IsNullOrEmpty(stageXInput.text)) {
+			return false;
+		}
+		if (string.IsNullOrEmpty(stageYInput.text)) {
+			return false;
+		}
+		if (string.IsNullOrEmpty(stageZInput.text)) {
+			return false;
+		}
+
+		if (string.IsNullOrEmpty(createInput.text)) {
+			return false;
+		}
+		if (string.IsNullOrEmpty(breakInput.text)) {
+			return false;
+		}
+
+		return true;
 	}
 }
 

@@ -30,6 +30,16 @@ public class BlockPointer : MonoBehaviour {
 		ChangeMaterialTexture();
 	}
 
+	public void SetStartBlock() {
+		this.blockType = Block.Start;
+		ChangeMaterialTexture();
+	}
+
+	public void SetGoalBlock() {
+		this.blockType = Block.Goal;
+		ChangeMaterialTexture();
+	}
+
 	void ChangeMaterialTexture() {
 		gameObject.GetComponent<Renderer>().material.SetTexture("_MainTex", StageManager.Instance.GetTexture(blockType));
 	}
