@@ -6,7 +6,7 @@ public class AudioManager : SingletonMonoBehaviour<AudioManager> {
 
 	AudioSource audioSource;
 
-	List<AudioClip> clips;
+	public List<AudioClip> soundEffects;
 
 	public List<AudioClip> bgm;
 
@@ -19,5 +19,9 @@ public class AudioManager : SingletonMonoBehaviour<AudioManager> {
 		audioSource.Stop();
 		audioSource.clip = bgm[index];
 		audioSource.Play();
+	}
+
+	public void PlaySoundEffect(int index) {
+		audioSource.PlayOneShot(soundEffects[index]);
 	}
 }

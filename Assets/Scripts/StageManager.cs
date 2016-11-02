@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.IO;
 using System.Linq;
+using UnityEngine.SceneManagement;
 
 
 public class StageManager : SingletonMonoBehaviour<StageManager> {
@@ -30,6 +31,8 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
 	Game game;
 	StageUIManager UIManager;
 
+	public bool edit = false;
+
 	protected override void Awake() {
 		base.Awake();
 
@@ -47,7 +50,10 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
 		if (StageSelectManager.SelectedStageFileName != null) {
 			LoadStage(StageSelectManager.SelectedStageFileName);
 			game = new Game(stage);
-			UIManager.ShowGameInformation(game);
+			if (UIManager) {
+				UIManager.ShowGameInformation(game);
+				wall.GetComponent<Renderer>().material.color = new Color(0, 0, 0, 0);
+			}
 		}
 	}
 
@@ -61,6 +67,10 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
 			if (Input.GetKeyDown(KeyCode.Return)) {
 				StartGame();
 			}
+		}
+
+		if (Input.GetKeyDown(KeyCode.Escape)) {
+			SceneManager.LoadScene("stage");
 		}
 	}
 
@@ -267,9 +277,18 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
 		}
 	}
 
+	public void RefreshScene() {
+		DoToStage((stage, x, y, z) => {
+			stage[x, y, z] = Block.Empty;
+		});
+		foreach (var block in GameObject.FindGameObjectsWithTag(Tags.BLOCK)) {
+			var position = BlockUtils.RoundPosition(block.transform.position);
+			var index = new StageIndex() { x = (uint) position.x, y = (uint) position.y, z = (uint) position.z };
+			stage[index.x, index.y, index.z] = block.GetComponent<BlockStatus>().blockType;
+		}
+	}
 
-
-	void SetPlayerToStartPosition() {
+	public void SetPlayerToStartPosition() {
 		if (startTransform)
 			player.transform.position = startTransform.position;
 	}
@@ -280,6 +299,26 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
 
 	public void DiePlayer() {
 		UIManager.ShowMessage("死亡しました");
+	}
+
+	public bool UseBlockCreate() {
+		if (game.limitCreate > 0) {
+			game.limitCreate--;
+			UIManager.ShowGameInformation(game);
+			return true;
+		}
+		return false;
+	}
+
+	public bool UseBlockBreak(GameObject block) {
+		if (game.limitBreak > 0) {
+			if (block.GetComponent<BlockStatus>().blockType == Block.Breakable) {
+				game.limitBreak--;
+				UIManager.ShowGameInformation(game);
+				return true;
+			}
+		}
+		return false;
 	}
 }
 

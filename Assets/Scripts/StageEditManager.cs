@@ -36,6 +36,11 @@ public class StageEditManager : SingletonMonoBehaviour<StageEditManager> {
 		SceneManager.LoadScene("main");
 	}
 
+	public void SwitchCamera() {
+		CameraSwitcher.Instance.SwitchNextCamera();
+		StageManager.Instance.SetPlayerToStartPosition();
+	}
+
 	#endregion
 
 
@@ -62,6 +67,12 @@ public class StageEditManager : SingletonMonoBehaviour<StageEditManager> {
 		if (!uiManager.ValidateInputField()) {
 			return;
 		}
+
+		if (!Directory.Exists(Stage.StageDataDirectoryPath)) {
+			Directory.CreateDirectory(Stage.StageDataDirectoryPath);
+		}
+
+		StageManager.Instance.RefreshScene();
 
 		var fileDialog = new System.Windows.Forms.SaveFileDialog();
 		fileDialog.InitialDirectory = Stage.StageDataDirectoryPath;

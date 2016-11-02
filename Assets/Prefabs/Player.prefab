@@ -43,6 +43,7 @@ GameObject:
   - 23: {fileID: 23000010327891202}
   - 114: {fileID: 114000012944391964}
   - 54: {fileID: 54000012995388976}
+  - 114: {fileID: 114000010638599016}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -95,7 +96,7 @@ Camera:
     height: 1
   near clip plane: 0.01
   far clip plane: 1000
-  field of view: 60
+  field of view: 75
   orthographic: 0
   orthographic size: 5
   m_Depth: 0
@@ -176,6 +177,18 @@ Behaviour:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000010733446152}
   m_Enabled: 1
+--- !u!114 &114000010638599016
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000013539651794}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b550faa328ba2444bf02ca80ae6c631, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rayDistance: 1
 --- !u!114 &114000012944391964
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -188,8 +201,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   jumpPower: 5
-  moveSpeed: 1
+  moveSpeed: 0.9
+  mouseLook:
+    XSensitivity: 2
+    YSensitivity: 2
+    clampVerticalRotation: 1
+    MinimumX: -90
+    MaximumX: 90
+    smooth: 0
+    smoothTime: 5
+    lockCursor: 0
   cam: {fileID: 20000010335575528}
+  deadLineHeight: 1
 --- !u!124 &124000011667170098
 Behaviour:
   m_ObjectHideFlags: 1

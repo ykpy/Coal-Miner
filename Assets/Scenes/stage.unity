@@ -42,7 +42,7 @@ RenderSettings:
 LightmapSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 7
-  m_GIWorkflowMode: 0
+  m_GIWorkflowMode: 1
   m_GISettings:
     serializedVersion: 2
     m_BounceScale: 1
@@ -71,7 +71,8 @@ LightmapSettings:
     m_FinalGatherFiltering: 1
     m_FinalGatherRayCount: 256
     m_ReflectionCompression: 2
-  m_LightingDataAsset: {fileID: 0}
+  m_LightingDataAsset: {fileID: 112000001, guid: 208058f14d5300b4e9c11e963853fa27,
+    type: 2}
   m_RuntimeCPUUsage: 25
 --- !u!196 &4
 NavMeshSettings:
@@ -155,12 +156,6 @@ MonoBehaviour:
     type: 2}
   m_PrefabInternal: {fileID: 796659839}
   m_Script: {fileID: 575553740, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
---- !u!114 &747173023 stripped
-MonoBehaviour:
-  m_PrefabParentObject: {fileID: 114000012343025694, guid: 8c4d43f986637d54bafa18047ab2d7b3,
-    type: 2}
-  m_PrefabInternal: {fileID: 2075275617}
-  m_Script: {fileID: 11500000, guid: 9f7fa516fd9421c4ab0a50a8a88f2d31, type: 3}
 --- !u!1001 &796659839
 Prefab:
   m_ObjectHideFlags: 0
@@ -267,7 +262,7 @@ Prefab:
         type: 2}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 747173023}
+      objectReference: {fileID: 2075275620}
     - target: {fileID: 114000013193186180, guid: 2fec65b23c74744439e7fc9757865ad4,
         type: 2}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -463,6 +458,17 @@ Prefab:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: PlayTestGame
       objectReference: {fileID: 0}
+    - target: {fileID: 114000013980378462, guid: 2fec65b23c74744439e7fc9757865ad4,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SwitchCamera
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000012565438150, guid: 2fec65b23c74744439e7fc9757865ad4,
+        type: 2}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 3459d67cb19fe7145a86f0fc2418c314,
+        type: 3}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 2fec65b23c74744439e7fc9757865ad4, type: 2}
   m_IsPrefabParent: 0
@@ -852,16 +858,6 @@ Prefab:
     - target: {fileID: 4000012026839060, guid: ff8242e8b6c18d14d9d157c7b3746f54, type: 2}
       propertyPath: m_RootOrder
       value: 8
-      objectReference: {fileID: 0}
-    - target: {fileID: 114000012944391964, guid: ff8242e8b6c18d14d9d157c7b3746f54,
-        type: 2}
-      propertyPath: mouseLook.lockCursor
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 114000012944391964, guid: ff8242e8b6c18d14d9d157c7b3746f54,
-        type: 2}
-      propertyPath: deadLineHeight
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: ff8242e8b6c18d14d9d157c7b3746f54, type: 2}

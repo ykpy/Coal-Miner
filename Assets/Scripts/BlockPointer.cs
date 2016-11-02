@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class BlockPointer : MonoBehaviour {
 
@@ -74,33 +75,36 @@ public class BlockPointer : MonoBehaviour {
 
 		pointerIndex = ConvertPositionToIndex(transform.position);
 
-		if (Input.GetMouseButtonDown(0)) {
-			if (hit.collider != null) {
-				StageManager.Instance.AddBlock(ConvertPositionToIndex(hit.point), blockType);
-			}
-		} else if (Input.GetMouseButton(1)) {
-			// 右クリックされたままの状態のとき、ポインター先のブロックを取得する
-			// ポインターを非表示にし、ポインター先のブロックの色を変化させる
-			cubeRenderer.enabled = false;
-
-			if (hit.collider == null || (hit.collider != null && hit.collider.gameObject != targetBlock)) {
-				if (targetBlock) {
-					targetBlock.GetComponent<Renderer>().material.color = defaultColor;
-					targetBlock = null;
+		if (!IsUGUIHit()) {
+			if (Input.GetMouseButtonDown(0)) {
+				if (hit.collider != null) {
+					StageManager.Instance.AddBlock(ConvertPositionToIndex(hit.point), blockType);
 				}
+			} else if (Input.GetMouseButton(1)) {
+				// 右クリックされたままの状態のとき、ポインター先のブロックを取得する
+				// ポインターを非表示にし、ポインター先のブロックの色を変化させる
+				cubeRenderer.enabled = false;
+
+				if (hit.collider == null || (hit.collider != null && hit.collider.gameObject != targetBlock)) {
+					if (targetBlock) {
+						targetBlock.GetComponent<Renderer>().material.color = defaultColor;
+						targetBlock = null;
+					}
+				}
+				if (hit.collider != null && hit.collider.tag == Tags.BLOCK && hit.collider.gameObject != targetBlock) {
+					targetBlock = hit.collider.gameObject;
+					defaultColor = targetBlock.GetComponent<Renderer>().material.color;
+					targetBlock.GetComponent<Renderer>().material.color = new Color(0, 0, 0, 0);
+				}
+			} else if (Input.GetMouseButtonUp(1)) {
+				if (targetBlock) {
+					StageManager.Instance.EraseBlock(ConvertPositionToIndex(targetBlock.transform.position));
+				}
+				targetBlock = null;
+				cubeRenderer.enabled = true;
 			}
-			if (hit.collider != null && hit.collider.tag == Tags.BLOCK && hit.collider.gameObject != targetBlock) {
-				targetBlock = hit.collider.gameObject;
-				defaultColor = targetBlock.GetComponent<Renderer>().material.color;
-				targetBlock.GetComponent<Renderer>().material.color = new Color(0, 0, 0, 0);
-			}
-		} else if (Input.GetMouseButtonUp(1)) {
-			if (targetBlock) {
-				StageManager.Instance.EraseBlock(ConvertPositionToIndex(targetBlock.transform.position));
-			}
-			targetBlock = null;
-			cubeRenderer.enabled = true;
 		}
+
 
 		pointerPositionText.text = pointerIndex.ToString();
 	}
@@ -111,6 +115,14 @@ public class BlockPointer : MonoBehaviour {
 			y = (uint) Mathf.RoundToInt(position.y),
 			z = (uint) Mathf.RoundToInt(position.z)
 		};
+	}
+
+	public bool IsUGUIHit() {
+		var pointer = new PointerEventData(EventSystem.current);
+		pointer.position = Input.mousePosition;
+		var result = new System.Collections.Generic.List<RaycastResult>();
+		EventSystem.current.RaycastAll(pointer, result);
+		return result.Count > 0;
 	}
 }
 
