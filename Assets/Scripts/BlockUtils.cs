@@ -18,5 +18,51 @@ public static class BlockUtils {
 		return obj.GetComponent<Renderer>().sharedMaterial;
 	}
 
+	public static Vector3 GetSurface(RaycastHit hit) {
+		if (hit.collider == null) {
+			return Vector3.zero;
+		}
+
+		var blockPosition = hit.collider.gameObject.transform.position;
+
+		var distance = hit.point - blockPosition;
+		var absDistance = new Vector3(Mathf.Abs(distance.x), Mathf.Abs(distance.y), Mathf.Abs(distance.z));
+
+		if (absDistance.x > absDistance.y && absDistance.x > absDistance.z) {
+			if (distance.x > 0) {
+				blockPosition.x += 1f;
+			} else {
+				blockPosition.x -= 1f;
+			}
+		} else if (absDistance.y > absDistance.x && absDistance.y > absDistance.z) {
+			if (distance.y > 0) {
+				blockPosition.y += 1f;
+			} else {
+				blockPosition.y -= 1f;
+			}
+		} else if (absDistance.z > absDistance.x && absDistance.z > absDistance.y) {
+			if (distance.z > 0) {
+				blockPosition.z += 1f;
+			} else {
+				blockPosition.z -= 1f;
+			}
+		}
+
+		if (distance.x > distance.y && distance.x > distance.z) {
+			blockPosition.x += 1f;
+		} else if (distance.y > distance.x && distance.y > distance.z) {
+			blockPosition.y += 1f;
+		} else if (distance.z > distance.x && distance.y > distance.z) {
+			blockPosition.z += 1f;
+		} else if (distance.x < distance.y && distance.x < distance.z) {
+			blockPosition.x -= 1f;
+		} else if (distance.y < distance.x && distance.y < distance.z) {
+			blockPosition.y -= 1f;
+		} else {
+			blockPosition.z -= 1f;
+		}
+
+		return blockPosition;
+	}
 
 }

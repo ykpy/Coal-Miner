@@ -304,7 +304,8 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
 	public bool UseBlockCreate() {
 		if (game.limitCreate > 0) {
 			game.limitCreate--;
-			UIManager.ShowGameInformation(game);
+			if (UIManager)
+				UIManager.ShowGameInformation(game);
 			return true;
 		}
 		return false;
@@ -314,7 +315,8 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
 		if (game.limitBreak > 0) {
 			if (block.GetComponent<BlockStatus>().blockType == Block.Breakable) {
 				game.limitBreak--;
-				UIManager.ShowGameInformation(game);
+				if (UIManager)
+					UIManager.ShowGameInformation(game);
 				return true;
 			}
 		}

@@ -54,9 +54,9 @@ public class Stage {
 
 		blocks = GetZeroArray(x, y, z);
 
-		for (uint i = 0; i < stage.x; i++) {
-			for (uint j = 0; j < stage.y; j++) {
-				for (uint k = 0; k < stage.z; k++) {
+		for (uint i = 0; i < x; i++) {
+			for (uint j = 0; j < y; j++) {
+				for (uint k = 0; k < z; k++) {
 					blocks[i, j, k] = stage[i, j, k];
 				}
 			}

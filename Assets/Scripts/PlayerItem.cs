@@ -14,11 +14,9 @@ public class PlayerItem : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		//var ray = new Ray(CameraSwitcher.Instance.MainCamera.transform.position, CameraSwitcher.Instance.MainCamera.transform.forward);
 		var ray = CameraSwitcher.Instance.MainCamera.ScreenPointToRay(Input.mousePosition);
 		RaycastHit hit;
 		if (Physics.Raycast(ray, out hit, rayDistance)) {
-			Debug.Log(hit.collider.gameObject);
 
 			if (targetBlock != hit.collider.gameObject) {
 				if (targetBlock)
@@ -30,8 +28,7 @@ public class PlayerItem : MonoBehaviour {
 
 			if (Input.GetMouseButtonDown(0)) {
 				if (StageManager.Instance.UseBlockCreate()) {
-					var instantPosition = hit.collider.gameObject.transform.position;
-					instantPosition.y += 1f;
+					var instantPosition = BlockUtils.GetSurface(hit);
 					Instantiate(StageManager.Instance.breakableBlock, BlockUtils.RoundPosition(instantPosition), Quaternion.identity);
 					AudioManager.Instance.PlaySoundEffect(0);
 				}
