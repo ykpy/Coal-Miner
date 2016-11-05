@@ -64,7 +64,9 @@ MonoBehaviour:
     type: 2}
   startBlock: {fileID: 1000013432704954, guid: 17ff5f0d1b557e14797f38a9db97e0ce, type: 2}
   goalBlock: {fileID: 1000013903151380, guid: 0019f73f59ae11a4e860582d09799efa, type: 2}
+  coin: {fileID: 1000012933286408, guid: e4916910cc4be1040a76c1d7d0835967, type: 2}
   wall: {fileID: 0}
+  edit: 0
 --- !u!114 &114000011123602746
 MonoBehaviour:
   m_ObjectHideFlags: 1

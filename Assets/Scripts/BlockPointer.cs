@@ -45,6 +45,15 @@ public class BlockPointer : MonoBehaviour {
 		ChangeMaterialTexture();
 	}
 
+	public void SetCoin() {
+		SetBlock(Block.Coin);
+	}
+
+	public void SetBlock(Block blockType) {
+		this.blockType = blockType;
+		ChangeMaterialTexture();
+	}
+
 	void ChangeMaterialTexture() {
 		cubeRenderer.material.SetTexture("_MainTex", StageManager.Instance.GetTexture(blockType));
 	}

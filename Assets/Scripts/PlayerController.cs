@@ -108,8 +108,12 @@ public class PlayerController : MonoBehaviour {
 
 	void OnTriggerEnter(Collider col) {
 		if (col.tag == Tags.BLOCK) {
-			if (col.GetComponent<BlockStatus>().blockType == Block.Goal) {
+			var blockStatus = col.GetComponent<BlockStatus>();
+			if (blockStatus.blockType == Block.Goal) {
 				StageManager.Instance.TouchGoal();
+			} else if (blockStatus.blockType == Block.Coin) {
+				StageManager.Instance.TouchCoin();
+				Destroy(col.gameObject);
 			}
 		}
 	}

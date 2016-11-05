@@ -23,6 +23,7 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
 	public GameObject breakableBlock;
 	public GameObject startBlock;
 	public GameObject goalBlock;
+	public GameObject coin;
 	#endregion
 
 	public GameObject wall;
@@ -61,8 +62,15 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
 		if (game != null && game.isStarted) {
 			if (!game.IsTimeOver) {
 				game.limitTime -= Time.deltaTime;
+				UIManager.ShowTimeLimit(Mathf.CeilToInt(game.limitTime));
+				if (game.limitTime <= 10f && !game.isPinch) {
+					AudioManager.Instance.PlayBGM(1);
+					AudioManager.Instance.Loop = false;
+					game.isPinch = true;
+				}
+			} else {
+				UIManager.ShowMessage("時間切れです");
 			}
-			UIManager.ShowTimeLimit(Mathf.CeilToInt(game.limitTime));
 		} else {
 			if (Input.GetKeyDown(KeyCode.Return)) {
 				StartGame();
@@ -77,6 +85,7 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
 	public void StartGame() {
 		game.StartGame();
 		UIManager.ShowGameInformation(game);
+		AudioManager.Instance.PlayBGM(0);
 	}
 
 	/// <summary>
@@ -150,6 +159,8 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
 				return startBlock;
 			case Block.Goal:
 				return goalBlock;
+			case Block.Coin:
+				return coin;
 			default:
 				throw new System.Exception();
 		}
@@ -294,11 +305,19 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
 	}
 
 	public void TouchGoal() {
-		UIManager.ShowMessage("クリアしました");
+		if (UIManager)
+			UIManager.ShowMessage("クリアしました");
 	}
 
 	public void DiePlayer() {
-		UIManager.ShowMessage("死亡しました");
+		if (UIManager)
+			UIManager.ShowMessage("死亡しました");
+	}
+
+	public void TouchCoin() {
+		if (UIManager) {
+			UIManager.ShowMessage("コインをゲットしました");
+		}
 	}
 
 	public bool UseBlockCreate() {
@@ -329,6 +348,8 @@ public class Game {
 	public float limitTime;
 	public uint limitCreate;
 	public uint limitBreak;
+	public int coinCount;
+	public bool isPinch;
 
 	public bool IsTimeOver {
 		get { return limitTime <= 0f; }
@@ -339,6 +360,8 @@ public class Game {
 		limitTime = stage.timeLimit;
 		limitCreate = stage.createTime;
 		limitBreak = stage.breakTime;
+		coinCount = 0;
+		isPinch = false;
 	}
 
 	public void StartGame() {

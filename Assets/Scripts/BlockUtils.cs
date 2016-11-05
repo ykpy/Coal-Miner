@@ -48,20 +48,6 @@ public static class BlockUtils {
 			}
 		}
 
-		if (distance.x > distance.y && distance.x > distance.z) {
-			blockPosition.x += 1f;
-		} else if (distance.y > distance.x && distance.y > distance.z) {
-			blockPosition.y += 1f;
-		} else if (distance.z > distance.x && distance.y > distance.z) {
-			blockPosition.z += 1f;
-		} else if (distance.x < distance.y && distance.x < distance.z) {
-			blockPosition.x -= 1f;
-		} else if (distance.y < distance.x && distance.y < distance.z) {
-			blockPosition.y -= 1f;
-		} else {
-			blockPosition.z -= 1f;
-		}
-
 		return blockPosition;
 	}
 
