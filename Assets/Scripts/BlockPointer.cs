@@ -1,17 +1,22 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class BlockPointer : MonoBehaviour {
 
 	RaycastHit hit;
 
 	public GameObject cube;
+	Renderer cubeRenderer;
+	Color defaultColor;
 
 	public float rayDistance = 10f;
 
 	public Text pointerPositionText;
 
 	StageIndex pointerIndex;
+
+	GameObject targetBlock;
 
 	Block blockType;
 
@@ -30,8 +35,31 @@ public class BlockPointer : MonoBehaviour {
 		ChangeMaterialTexture();
 	}
 
+	public void SetStartBlock() {
+		this.blockType = Block.Start;
+		ChangeMaterialTexture();
+	}
+
+	public void SetGoalBlock() {
+		this.blockType = Block.Goal;
+		ChangeMaterialTexture();
+	}
+
+	public void SetCoin() {
+		SetBlock(Block.Coin);
+	}
+
+	public void SetBlock(Block blockType) {
+		this.blockType = blockType;
+		ChangeMaterialTexture();
+	}
+
 	void ChangeMaterialTexture() {
-		gameObject.GetComponent<Renderer>().material.SetTexture("_MainTex", StageManager.Instance.GetTexture(blockType));
+		cubeRenderer.material.SetTexture("_MainTex", StageManager.Instance.GetTexture(blockType));
+	}
+
+	void Awake() {
+		cubeRenderer = GetComponent<Renderer>();
 	}
 
 	// Use this for initialization
@@ -45,27 +73,50 @@ public class BlockPointer : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-		var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+		var ray = CameraSwitcher.Instance.MainCamera.ScreenPointToRay(Input.mousePosition);
 
 		if (Physics.Raycast(ray, out hit, rayDistance)) {
 			hit.point = new Vector3(hit.point.x, hit.point.y + 0.5f, hit.point.z);
 			cube.transform.position = hit.point.Round();
+			if (hit.collider.tag == Tags.BLOCK) {
+				cube.transform.position = BlockUtils.GetSurface(hit);
+			}
 		}
 
 		Debug.DrawRay(ray.origin, ray.direction * 100f, Color.green);
 
 		pointerIndex = ConvertPositionToIndex(transform.position);
 
-		if (Input.GetMouseButtonDown(0)) {
-			if (hit.collider != null) {
-				StageManager.Instance.AddBlock(ConvertPositionToIndex(hit.point), blockType);
-			}
-		} else if (Input.GetMouseButtonDown(1)) {
-			if (hit.collider.tag == Tags.BLOCK) {
-				StageManager.Instance.EraseBlock(ConvertPositionToIndex(hit.collider.transform.position));
-				Destroy(hit.collider.gameObject);
+		if (!IsUGUIHit()) {
+			if (Input.GetMouseButtonDown(0)) {
+				if (hit.collider != null) {
+					StageManager.Instance.AddBlock(ConvertPositionToIndex(cube.transform.position), blockType);
+				}
+			} else if (Input.GetMouseButton(1)) {
+				// 右クリックされたままの状態のとき、ポインター先のブロックを取得する
+				// ポインターを非表示にし、ポインター先のブロックの色を変化させる
+				cubeRenderer.enabled = false;
+
+				if (hit.collider == null || (hit.collider != null && hit.collider.gameObject != targetBlock)) {
+					if (targetBlock) {
+						targetBlock.GetComponent<Renderer>().material.color = defaultColor;
+						targetBlock = null;
+					}
+				}
+				if (hit.collider != null && hit.collider.tag == Tags.BLOCK && hit.collider.gameObject != targetBlock) {
+					targetBlock = hit.collider.gameObject;
+					defaultColor = targetBlock.GetComponent<Renderer>().material.color;
+					targetBlock.GetComponent<Renderer>().material.color = new Color(0, 0, 0, 0);
+				}
+			} else if (Input.GetMouseButtonUp(1)) {
+				if (targetBlock) {
+					StageManager.Instance.EraseBlock(ConvertPositionToIndex(targetBlock.transform.position));
+				}
+				targetBlock = null;
+				cubeRenderer.enabled = true;
 			}
 		}
+
 
 		pointerPositionText.text = pointerIndex.ToString();
 	}
@@ -76,6 +127,14 @@ public class BlockPointer : MonoBehaviour {
 			y = (uint) Mathf.RoundToInt(position.y),
 			z = (uint) Mathf.RoundToInt(position.z)
 		};
+	}
+
+	public bool IsUGUIHit() {
+		var pointer = new PointerEventData(EventSystem.current);
+		pointer.position = Input.mousePosition;
+		var result = new System.Collections.Generic.List<RaycastResult>();
+		EventSystem.current.RaycastAll(pointer, result);
+		return result.Count > 0;
 	}
 }
 

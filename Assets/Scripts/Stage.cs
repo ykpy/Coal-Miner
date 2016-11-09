@@ -11,7 +11,15 @@ public class Stage {
 		get {
 			return stageName;
 		}
+		set {
+			stageName = value;
+		}
 	}
+
+	public uint breakTime;
+	public uint createTime;
+
+	public int timeLimit;
 
 	Block[,,] blocks;
 	uint x;
@@ -46,9 +54,9 @@ public class Stage {
 
 		blocks = GetZeroArray(x, y, z);
 
-		for (uint i = 0; i < stage.x; i++) {
-			for (uint j = 0; j < stage.y; j++) {
-				for (uint k = 0; k < stage.z; k++) {
+		for (uint i = 0; i < x; i++) {
+			for (uint j = 0; j < y; j++) {
+				for (uint k = 0; k < z; k++) {
 					blocks[i, j, k] = stage[i, j, k];
 				}
 			}
@@ -60,18 +68,28 @@ public class Stage {
 			.Where(line => !line.StartsWith("#"))	// コメント行を取り除く
 			.ToArray();
 
+		// ステージ名
 		stageName = lines[0];
 
-		var stageSize = lines[1].Split(' ').Select(size => uint.Parse(size)).ToArray();
+		timeLimit = int.Parse(lines[1]);
+
+		// ブロック生成・破壊可能回数
+		var times = lines[2].Split(' ').Select(time => uint.Parse(time)).ToArray();
+		createTime = times[0];
+		breakTime = times[1];
+
+		// ステージサイズの読み込み
+		var stageSize = lines[3].Split(' ').Select(size => uint.Parse(size)).ToArray();
 		x = stageSize[0];
 		y = stageSize[1];
 		z = stageSize[2];
 
 		blocks = new Block[x, y, z];
 
+		// ステージデータ
 		for (uint j = 0; j < y; j++) {
 			for (uint k = 0; k < z; k++) {
-				var xLine = lines[j * z + k + 2]
+				var xLine = lines[j * z + k + 4]
 							.Split(new[] {' '}, System.StringSplitOptions.RemoveEmptyEntries)
 							.Select(l => uint.Parse(l)).ToArray();
 				for (uint i = 0; i < x; i++) {
@@ -104,4 +122,25 @@ public class Stage {
 
 		return blocks;
 	}
+
+	public int GetCoinCount() {
+		int count = 0;
+		for (uint i = 0; i < x; i++) {
+			for (uint j = 0; j < y; j++) {
+				for (uint k = 0; k < z; k++) {
+					if (blocks[i, j, k] == Block.Coin)
+						count++;
+				}
+			}
+		}
+		return count;
+	}
+}
+
+public class StageDataTag {
+	public const string StageName = "StageName";
+	public const string TimeLimit = "TimeLimit";
+	public const string BlockCreateBreakNum = "Create Break";
+	public const string StageSize = "StageSize X Y Z";
+	public const string Stage = "Stage";
 }

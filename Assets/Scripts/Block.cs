@@ -3,6 +3,9 @@
 	Ground,
 	Breakable,
 	Unbreakable,
+	Start,
+	Goal,
+	Coin,
 }
 
 public static class BlockExtensions {
