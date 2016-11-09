@@ -16,7 +16,6 @@ public class PlayerController : MonoBehaviour {
 	bool jump = false;
 	bool grounded = false;
 	bool prevGrounded = false;
-	bool jumping = false;
 
 	float fallDistance;
 	Vector3 prevPosition;
@@ -115,6 +114,8 @@ public class PlayerController : MonoBehaviour {
 				StageManager.Instance.TouchCoin();
 				Destroy(col.gameObject);
 			}
+		} else if (col.tag == Tags.WALL) {
+			StageManager.Instance.DiePlayer();
 		}
 	}
 }

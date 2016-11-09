@@ -78,6 +78,9 @@ public class BlockPointer : MonoBehaviour {
 		if (Physics.Raycast(ray, out hit, rayDistance)) {
 			hit.point = new Vector3(hit.point.x, hit.point.y + 0.5f, hit.point.z);
 			cube.transform.position = hit.point.Round();
+			if (hit.collider.tag == Tags.BLOCK) {
+				cube.transform.position = BlockUtils.GetSurface(hit);
+			}
 		}
 
 		Debug.DrawRay(ray.origin, ray.direction * 100f, Color.green);
@@ -87,7 +90,7 @@ public class BlockPointer : MonoBehaviour {
 		if (!IsUGUIHit()) {
 			if (Input.GetMouseButtonDown(0)) {
 				if (hit.collider != null) {
-					StageManager.Instance.AddBlock(ConvertPositionToIndex(hit.point), blockType);
+					StageManager.Instance.AddBlock(ConvertPositionToIndex(cube.transform.position), blockType);
 				}
 			} else if (Input.GetMouseButton(1)) {
 				// 右クリックされたままの状態のとき、ポインター先のブロックを取得する

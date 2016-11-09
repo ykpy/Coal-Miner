@@ -122,6 +122,19 @@ public class Stage {
 
 		return blocks;
 	}
+
+	public int GetCoinCount() {
+		int count = 0;
+		for (uint i = 0; i < x; i++) {
+			for (uint j = 0; j < y; j++) {
+				for (uint k = 0; k < z; k++) {
+					if (blocks[i, j, k] == Block.Coin)
+						count++;
+				}
+			}
+		}
+		return count;
+	}
 }
 
 public class StageDataTag {

@@ -91,6 +91,12 @@ NavMeshSettings:
     cellSize: 0.16666667
     manualCellSize: 0
   m_NavMeshData: {fileID: 0}
+--- !u!114 &152818381 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 114000010814210086, guid: 2fec65b23c74744439e7fc9757865ad4,
+    type: 2}
+  m_PrefabInternal: {fileID: 796659839}
+  m_Script: {fileID: 708705254, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
 --- !u!114 &280576240 stripped
 MonoBehaviour:
   m_PrefabParentObject: {fileID: 114000010186838992, guid: 2fec65b23c74744439e7fc9757865ad4,
@@ -258,11 +264,6 @@ Prefab:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1216584372}
-    - target: {fileID: 114000013307030972, guid: 2fec65b23c74744439e7fc9757865ad4,
-        type: 2}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 1216584372}
     - target: {fileID: 114000011502065956, guid: 2fec65b23c74744439e7fc9757865ad4,
         type: 2}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -308,6 +309,11 @@ Prefab:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 2075275620}
+    - target: {fileID: 114000013307030972, guid: 2fec65b23c74744439e7fc9757865ad4,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1216584372}
     - target: {fileID: 224000011518123146, guid: 2fec65b23c74744439e7fc9757865ad4,
         type: 2}
       propertyPath: m_AnchorMin.y
@@ -487,11 +493,6 @@ Prefab:
         type: 2}
       propertyPath: m_SizeDelta.y
       value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 114000011066494732, guid: 2fec65b23c74744439e7fc9757865ad4,
-        type: 2}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: SetCoin
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 2fec65b23c74744439e7fc9757865ad4, type: 2}
@@ -853,11 +854,11 @@ Prefab:
     m_Modifications:
     - target: {fileID: 4000012026839060, guid: ff8242e8b6c18d14d9d157c7b3746f54, type: 2}
       propertyPath: m_LocalPosition.x
-      value: -2.934
+      value: -1000
       objectReference: {fileID: 0}
     - target: {fileID: 4000012026839060, guid: ff8242e8b6c18d14d9d157c7b3746f54, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 2.328
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4000012026839060, guid: ff8242e8b6c18d14d9d157c7b3746f54, type: 2}
       propertyPath: m_LocalPosition.z
@@ -882,6 +883,11 @@ Prefab:
     - target: {fileID: 4000012026839060, guid: ff8242e8b6c18d14d9d157c7b3746f54, type: 2}
       propertyPath: m_RootOrder
       value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000010638599016, guid: ff8242e8b6c18d14d9d157c7b3746f54,
+        type: 2}
+      propertyPath: rayDistance
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: ff8242e8b6c18d14d9d157c7b3746f54, type: 2}
@@ -995,6 +1001,17 @@ Prefab:
       propertyPath: edit
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 114000012679286654, guid: 8c4d43f986637d54bafa18047ab2d7b3,
+        type: 2}
+      propertyPath: coinText
+      value: 
+      objectReference: {fileID: 152818381}
+    - target: {fileID: 114000011008851012, guid: 8c4d43f986637d54bafa18047ab2d7b3,
+        type: 2}
+      propertyPath: unbreakableBlock
+      value: 
+      objectReference: {fileID: 1000010970830630, guid: 6cb0042b098449646bc15fa7c07903be,
+        type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 8c4d43f986637d54bafa18047ab2d7b3, type: 2}
   m_IsPrefabParent: 0
