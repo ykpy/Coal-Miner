@@ -14,7 +14,8 @@ public class PlayerItem : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		var ray = CameraSwitcher.Instance.MainCamera.ScreenPointToRay(Input.mousePosition);
+		//var ray = CameraSwitcher.Instance.MainCamera.ScreenPointToRay(Input.mousePosition);
+		var ray = new Ray(CameraSwitcher.Instance.MainCamera.transform.position, CameraSwitcher.Instance.MainCamera.transform.forward);
 		RaycastHit hit;
 		if (Physics.Raycast(ray, out hit, rayDistance)) {
 

@@ -57,7 +57,9 @@ public class Stage {
 		for (uint i = 0; i < x; i++) {
 			for (uint j = 0; j < y; j++) {
 				for (uint k = 0; k < z; k++) {
-					blocks[i, j, k] = stage[i, j, k];
+					if (i < stage.x && j < stage.y && k < stage.z) {
+						blocks[i, j, k] = stage[i, j, k];
+					}
 				}
 			}
 		}
