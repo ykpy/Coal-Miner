@@ -21,6 +21,9 @@ public class StageUIManager : BaseStageUIManager {
 	/// </summary>
 	/// <param name="limitTime">残り時間</param>
 	public void ShowTimeLimit(int limitTime) {
+		if (!timeLimit) {
+			timeLimit = GameObject.Find("Time Limit").GetComponent<Text>();
+		}
 		timeLimit.text = limitTime.ToString();
 	}
 

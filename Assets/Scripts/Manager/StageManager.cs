@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.IO;
 using System.Linq;
+using System.Collections;
 using UnityEngine.SceneManagement;
 
 
@@ -14,6 +15,9 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
 
 	Transform startTransform;
 	public Transform stageTransform;
+
+	[SerializeField]
+	float sceneTransitionInterval = 1f;
 
 	public GameObject player;
 
@@ -75,7 +79,10 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
 					game.isPinch = true;
 				}
 			} else {
-				UIManager.ShowMessage("時間切れです");
+				if (game.isPinch) {
+					TimeUp();
+					game.isPinch = false;
+				}
 			}
 		} else {
 			if (Input.GetKeyDown(KeyCode.Return)) {
@@ -328,11 +335,24 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
 	public void TouchGoal() {
 		if (UIManager)
 			UIManager.ShowMessage("クリアしました");
+		StartCoroutine(GoToSelectScene(sceneTransitionInterval));
 	}
 
 	public void DiePlayer() {
 		if (UIManager)
 			UIManager.ShowMessage("死亡しました");
+		StartCoroutine(GoToSelectScene(sceneTransitionInterval));
+	}
+
+	public void TimeUp() {
+		if (UIManager)
+			UIManager.ShowMessage("時間切れです");
+		StartCoroutine(GoToSelectScene(sceneTransitionInterval));
+	}
+
+	public IEnumerator GoToSelectScene(float interval) {
+		yield return new WaitForSeconds(interval);
+		SceneManager.LoadScene("select");
 	}
 
 	public void TouchCoin() {
