@@ -18,8 +18,6 @@ public class StageSelectManager : MonoBehaviour {
 	public Button nextButton;
 	public Button prevButton;
 
-	public List<Image> images;
-
 	public Text name;
 	public Text timeLimit;
 	public Text createTime;
@@ -28,9 +26,13 @@ public class StageSelectManager : MonoBehaviour {
 
 	public Texture2D stageImageTexture;
 
+	StageCreator stageCreator;
+
 	void Awake() {
 		stageRepository = new StageRepository();
 		Cursor.visible = true;
+
+		stageCreator = GetComponent<StageCreator>();
 	}
 
 	void Start() {
@@ -42,6 +44,8 @@ public class StageSelectManager : MonoBehaviour {
 		try {
 			SelectedStage = currentStages[index];
 			ShowDescription(SelectedStage);
+			stageCreator.InstantiateStage(SelectedStage);
+
 		} catch (System.IndexOutOfRangeException) {
 			ShowDescription(null);
 		} catch (System.ArgumentOutOfRangeException) {
@@ -72,7 +76,6 @@ public class StageSelectManager : MonoBehaviour {
 
 	void LoadStages() {
 		currentStages = stageRepository.FindByLimitAndOffset(LIMIT, offset);
-		ShowImages(currentStages);
 		CheckPages();
 	}
 
@@ -86,19 +89,6 @@ public class StageSelectManager : MonoBehaviour {
 			prevButton.gameObject.SetActive(true);
 		} else {
 			prevButton.gameObject.SetActive(false);
-		}
-	}
-
-	void ShowImages(List<Stage> stages) {
-
-		int i = 0;
-		for (; i < stages.Count; i++) {
-			images[i].material.mainTexture = null;
-			images[i].sprite = Sprite.Create(stageImageTexture, new Rect(0, 0, 128, 128), Vector2.zero);
-			//stages[i];
-		}
-		for (; i < images.Count; i++) {
-			images[i].sprite = null;
 		}
 	}
 

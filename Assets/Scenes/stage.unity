@@ -889,6 +889,10 @@ Prefab:
       propertyPath: rayDistance
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 4000010880786710, guid: ff8242e8b6c18d14d9d157c7b3746f54, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 1.5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: ff8242e8b6c18d14d9d157c7b3746f54, type: 2}
   m_IsPrefabParent: 0
@@ -1015,6 +1019,31 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 8c4d43f986637d54bafa18047ab2d7b3, type: 2}
   m_IsPrefabParent: 0
+--- !u!1 &2075275618 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1000011009036910, guid: 8c4d43f986637d54bafa18047ab2d7b3,
+    type: 2}
+  m_PrefabInternal: {fileID: 2075275617}
+--- !u!114 &2075275619
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2075275618}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d161dc511eca2c54ea6cfd914562ecbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  groundBlock: {fileID: 1000010970830630, guid: bbbca81a56c426e479aa60d41f0d9687,
+    type: 2}
+  unbreakableBlock: {fileID: 1000010970830630, guid: 6cb0042b098449646bc15fa7c07903be,
+    type: 2}
+  breakableBlock: {fileID: 1000010970830630, guid: acb0c0485547c4745a9656d6cbd1ace5,
+    type: 2}
+  startBlock: {fileID: 1000013432704954, guid: 17ff5f0d1b557e14797f38a9db97e0ce, type: 2}
+  goalBlock: {fileID: 1000013903151380, guid: 0019f73f59ae11a4e860582d09799efa, type: 2}
+  coin: {fileID: 1000012933286408, guid: e4916910cc4be1040a76c1d7d0835967, type: 2}
 --- !u!114 &2075275620 stripped
 MonoBehaviour:
   m_PrefabParentObject: {fileID: 114000011123602746, guid: 8c4d43f986637d54bafa18047ab2d7b3,

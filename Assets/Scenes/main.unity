@@ -770,6 +770,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cameras:
   - {fileID: 1716287998}
+--- !u!114 &1766034797
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1766034795}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d161dc511eca2c54ea6cfd914562ecbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  groundBlock: {fileID: 1000010970830630, guid: bbbca81a56c426e479aa60d41f0d9687,
+    type: 2}
+  unbreakableBlock: {fileID: 1000010970830630, guid: 6cb0042b098449646bc15fa7c07903be,
+    type: 2}
+  breakableBlock: {fileID: 1000010970830630, guid: acb0c0485547c4745a9656d6cbd1ace5,
+    type: 2}
+  startBlock: {fileID: 1000013432704954, guid: 17ff5f0d1b557e14797f38a9db97e0ce, type: 2}
+  goalBlock: {fileID: 1000013903151380, guid: 0019f73f59ae11a4e860582d09799efa, type: 2}
+  coin: {fileID: 1000012933286408, guid: e4916910cc4be1040a76c1d7d0835967, type: 2}
 --- !u!1001 &1808928540
 Prefab:
   m_ObjectHideFlags: 0

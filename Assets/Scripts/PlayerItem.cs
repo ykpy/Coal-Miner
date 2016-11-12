@@ -34,7 +34,7 @@ public class PlayerItem : MonoBehaviour {
 			if (Input.GetButtonDown("Create")) {
 				if (StageManager.Instance.UseBlockCreate()) {
 					var instantPosition = BlockUtils.GetSurface(hit);
-					Instantiate(StageManager.Instance.breakableBlock, BlockUtils.RoundPosition(instantPosition), Quaternion.identity);
+					Instantiate(StageManager.Instance.BreakableBlock, BlockUtils.RoundPosition(instantPosition), Quaternion.identity);
 					AudioManager.Instance.PlaySoundEffect(0);
 				}
 			} else if (Input.GetButtonDown("Break")) {

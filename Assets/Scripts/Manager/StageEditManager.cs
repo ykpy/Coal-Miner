@@ -22,6 +22,8 @@ public class StageEditManager : SingletonMonoBehaviour<StageEditManager> {
 				uiManager.DecreaseCoinCount();
 			}
 		};
+
+		Cursor.visible = true;
 	}
 
 	#region stage edit

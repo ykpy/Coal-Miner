@@ -21,20 +21,13 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
 
 	public GameObject player;
 
-	#region block
-	public GameObject groundBlock;
-	public GameObject unbreakableBlock;
-	public GameObject breakableBlock;
-	public GameObject startBlock;
-	public GameObject goalBlock;
-	public GameObject coin;
-	#endregion
-
 	public GameObject wall;
 	readonly Vector3 defaultWallScale = new Vector3(1f, 0.01f, 1f);
 
 	Game game;
 	StageUIManager UIManager;
+
+	StageCreator stageCreator;
 
 	public bool edit = false;
 
@@ -43,15 +36,23 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
 	public event System.Action<Block> OnBlockErase = (blockType) => { };
 	#endregion
 
+	public GameObject BreakableBlock {
+		get {
+			return stageCreator.breakableBlock;
+		}
+	}
+
 	protected override void Awake() {
 		base.Awake();
+		stageCreator = GetComponent<StageCreator>();
 
-		InitializeStage(10, 10, 10);
-		BaseStageUIManager.Instance.ShowStageInformation(stage);
+		UIManager = FindObjectOfType<StageUIManager>();
 	}
 
 	void Start() {
-		UIManager = FindObjectOfType<StageUIManager>();
+		InitializeStage(10, 10, 10);
+		BaseStageUIManager.Instance.ShowStageInformation(stage);
+
 
 		InitializeWall();
 
@@ -130,7 +131,8 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
 	/// <param name="z">奥行き</param>
 	/// <returns></returns>
 	public bool InitializeStage(uint x, uint y, uint z) {
-		DestroyAllBlocks();
+		stageCreator.DestroyAllBlocks();
+
 		stage = new Stage(x, y, z);
 		stageBlockObjects = new GameObject[x, y, z];
 
@@ -147,7 +149,7 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
 	/// <param name="stage">元となるステージ</param>
 	/// <returns></returns>
 	public bool InitializeStage(Stage stage) {
-		DestroyAllBlocks();
+		stageCreator.DestroyAllBlocks();
 		this.stage = stage;
 		stageBlockObjects = new GameObject[stage.X, stage.Y, stage.Z];
 
@@ -156,39 +158,6 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
 		});
 
 		return true;
-	}
-
-	/// <summary>
-	/// 全てのブロックを破棄します
-	/// </summary>
-	void DestroyAllBlocks() {
-		foreach (var block in GameObject.FindGameObjectsWithTag(Tags.BLOCK)) {
-			DestroyImmediate(block);
-		}
-	}
-
-	/// <summary>
-	/// ブロックタイプからブロックオブジェクトを取得します
-	/// </summary>
-	/// <param name="blockType">ブロックタイプ</param>
-	/// <returns>タイプに対応するブロックゲームオブジェクト</returns>
-	GameObject GetBlockObjectByBlockType(Block blockType) {
-		switch (blockType) {
-			case Block.Breakable:
-				return breakableBlock;
-			case Block.Ground:
-				return groundBlock;
-			case Block.Unbreakable:
-				return unbreakableBlock;
-			case Block.Start:
-				return startBlock;
-			case Block.Goal:
-				return goalBlock;
-			case Block.Coin:
-				return coin;
-			default:
-				throw new System.Exception();
-		}
 	}
 
 	/// <summary>
@@ -207,14 +176,11 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
 			return false;
 
 		stage[x, y, z] = blockType;
-		var obj = Instantiate(GetBlockObjectByBlockType(blockType), new Vector3(x, y, z), Quaternion.identity) as GameObject;
-		obj.GetComponent<BlockStatus>().stageIndex = new StageIndex() { x = x, y = y, z = z };
-		obj.transform.SetParent(stageTransform);
 
-		stageBlockObjects[x, y, z] = obj;
+		stageBlockObjects[x, y, z] = stageCreator.InstantiateBlock(x, y, z, blockType);
 
 		if (blockType == Block.Start) {
-			startTransform = obj.transform;
+			startTransform = stageBlockObjects[x, y, z].transform;
 		}
 
 		OnBlockAdd(blockType);
@@ -311,24 +277,6 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
 			.First();
 	}
 
-	/// <summary>
-	/// ブロックタイプからテクスチャを取得します
-	/// </summary>
-	/// <param name="blockType">ブロックタイプ</param>
-	/// <returns>一致するテクスチャ</returns>
-	public Texture GetTexture(Block blockType) {
-		switch (blockType) {
-			case Block.Breakable:
-				return BlockUtils.GetTextureFromMaterial(breakableBlock.GetMaterial());
-			case Block.Unbreakable:
-				return BlockUtils.GetTextureFromMaterial(unbreakableBlock.GetMaterial());
-			case Block.Ground:
-				return BlockUtils.GetTextureFromMaterial(groundBlock.GetMaterial());
-			default:
-				return null;
-		}
-	}
-
 	public void RefreshScene() {
 		DoToStage((stage, x, y, z) => {
 			stage[x, y, z] = Block.Empty;
@@ -411,37 +359,9 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
 	public bool IsInArea(uint x, uint y, uint z) {
 		return x < stage.X && y < stage.Y && z < stage.Z;
 	}
-}
 
-public class Game {
-	public bool isStarted;
-	public float limitTime;
-	public uint limitCreate;
-	public uint limitBreak;
-	public int coinCount;
-	public readonly int coinMax;
-	public bool isPinch;
-
-	public bool IsTimeOver {
-		get { return limitTime <= 0f; }
-	}
-
-	public Game(Stage stage) {
-		isStarted = false;
-		limitTime = stage.timeLimit;
-		limitCreate = stage.createTime;
-		limitBreak = stage.breakTime;
-		coinCount = 0;
-		coinMax = stage.GetCoinCount();
-		isPinch = false;
-	}
-
-	public void StartGame() {
-		isStarted = true;
-	}
-
-	public void FinishGame() {
-		isStarted = false;
+	public Texture GetTexture(Block blockType) {
+		return stageCreator.GetTexture(blockType);
 	}
 }
 
