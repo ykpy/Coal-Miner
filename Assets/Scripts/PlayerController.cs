@@ -51,8 +51,8 @@ public class PlayerController : MonoBehaviour {
 		if (!CameraSwitcher.Instance.IsMain(cam))
 			return;
 
-		moveDirection = cam.transform.forward * Input.GetAxisRaw("Vertical")
-						+ cam.transform.right * Input.GetAxisRaw("Horizontal");
+		moveDirection = transform.forward * Input.GetAxisRaw("Vertical")
+						+ transform.right * Input.GetAxisRaw("Horizontal");
 		moveDirection *= moveSpeed;
 
 		moveDirection.y = rb.velocity.y;

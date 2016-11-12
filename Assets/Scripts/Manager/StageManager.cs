@@ -57,13 +57,22 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
 
 		SetPlayerToStartPosition();
 
-		if (StageSelectManager.SelectedStageFileName != null) {
-			LoadStage(StageSelectManager.SelectedStageFileName);
+		// ステージが選択されている場合、ゲームを開始する
+		if (StageSelectManager.IsStageSelected()) {
+			if (StageSelectManager.SelectedStageFileName != null) {
+				LoadStage(StageSelectManager.SelectedStageFileName);
+			} else {
+				LoadStage(StageSelectManager.SelectedStage);
+			}
+			// ゲーム情報の生成
 			game = new Game(stage);
+
+			// UIのセット
 			if (UIManager) {
 				UIManager.ShowGameInformation(game);
 				wall.GetComponent<Renderer>().material.color = new Color(0, 0, 0, 0);
 			}
+
 			StartGame();
 		}
 	}
@@ -253,6 +262,16 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
 		BaseStageUIManager.Instance.ShowMessage(MessageUtils.StageDataLoadSuccessMessage);
 	}
 
+	public void LoadStage(Stage stage) {
+		this.stage = stage;
+
+		BaseStageUIManager.instance.ShowStageInformation(stage);
+		InitializeStage(stage);
+		InitializeWall();
+		SetPlayerToStartPosition();
+		BaseStageUIManager.Instance.ShowMessage(MessageUtils.StageDataLoadSuccessMessage);
+	}
+
 	/// <summary>
 	/// ステージデータファイルを文字列として読み込みます
 	/// </summary>
@@ -333,8 +352,12 @@ public class StageManager : SingletonMonoBehaviour<StageManager> {
 	}
 
 	public void TouchGoal() {
-		if (UIManager)
+		if (UIManager) {
 			UIManager.ShowMessage("クリアしました");
+			if (game.coinCount == game.coinMax) {
+				UIManager.ShowMessage("完全クリアしました");
+			}
+		}
 		StartCoroutine(GoToSelectScene(sceneTransitionInterval));
 	}
 

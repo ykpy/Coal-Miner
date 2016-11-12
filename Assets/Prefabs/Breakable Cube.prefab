@@ -24,7 +24,7 @@ GameObject:
   - 23: {fileID: 23000010976074120}
   - 114: {fileID: 114000013438927446}
   - 54: {fileID: 54000010840256558}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Breakable Cube
   m_TagString: Block
   m_Icon: {fileID: 0}

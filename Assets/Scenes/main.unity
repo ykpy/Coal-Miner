@@ -219,7 +219,7 @@ Prefab:
     - target: {fileID: 114000010638599016, guid: ff8242e8b6c18d14d9d157c7b3746f54,
         type: 2}
       propertyPath: rayDistance
-      value: 2.5
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 114000012944391964, guid: ff8242e8b6c18d14d9d157c7b3746f54,
         type: 2}
@@ -234,6 +234,14 @@ Prefab:
         type: 2}
       propertyPath: m_Enabled
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1000010733446152, guid: ff8242e8b6c18d14d9d157c7b3746f54, type: 2}
+      propertyPath: m_Layer
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1000013539651794, guid: ff8242e8b6c18d14d9d157c7b3746f54, type: 2}
+      propertyPath: m_Layer
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: ff8242e8b6c18d14d9d157c7b3746f54, type: 2}

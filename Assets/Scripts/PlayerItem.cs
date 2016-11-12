@@ -7,6 +7,11 @@ public class PlayerItem : MonoBehaviour {
 	GameObject targetBlock;
 	Color defaultColor;
 
+	void Awake() {
+		Cursor.visible = false;
+		Cursor.lockState = CursorLockMode.Confined;
+	}
+
 	// Use this for initialization
 	void Start () {
 	
@@ -14,7 +19,6 @@ public class PlayerItem : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		//var ray = CameraSwitcher.Instance.MainCamera.ScreenPointToRay(Input.mousePosition);
 		var ray = new Ray(CameraSwitcher.Instance.MainCamera.transform.position, CameraSwitcher.Instance.MainCamera.transform.forward);
 		RaycastHit hit;
 		if (Physics.Raycast(ray, out hit, rayDistance)) {
@@ -27,13 +31,13 @@ public class PlayerItem : MonoBehaviour {
 				targetBlock.GetComponent<Renderer>().material.color = new Color(0.1f, 0.1f, 0.1f, 0.0f);
 			}
 
-			if (Input.GetMouseButtonDown(0)) {
+			if (Input.GetButtonDown("Create")) {
 				if (StageManager.Instance.UseBlockCreate()) {
 					var instantPosition = BlockUtils.GetSurface(hit);
 					Instantiate(StageManager.Instance.breakableBlock, BlockUtils.RoundPosition(instantPosition), Quaternion.identity);
 					AudioManager.Instance.PlaySoundEffect(0);
 				}
-			} else if (Input.GetMouseButtonDown(1)) {
+			} else if (Input.GetButtonDown("Break")) {
 				if (StageManager.Instance.UseBlockBreak(targetBlock)) {
 					Destroy(targetBlock);
 					AudioManager.Instance.PlaySoundEffect(1);

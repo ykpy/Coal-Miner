@@ -24,8 +24,8 @@ public class MouseLook {
 
 
 	public void LookRotation(Transform character, Transform camera) {
-		float yRot = Input.GetAxis("Mouse X") * XSensitivity;
-		float xRot = Input.GetAxis("Mouse Y") * YSensitivity;
+		float yRot = Input.GetAxis("Mouse X") * XSensitivity + Input.GetAxis("Right Stick X") * XSensitivity;
+		float xRot = Input.GetAxis("Mouse Y") * YSensitivity + Input.GetAxis("Right Stick Y") * YSensitivity;
 
 		m_CharacterTargetRot *= Quaternion.Euler(0f, yRot, 0f);
 		m_CameraTargetRot *= Quaternion.Euler(-xRot, 0f, 0f);
